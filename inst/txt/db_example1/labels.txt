@@ -1,0 +1,4 @@
+label	unit	type	min	max	missing	description
+x0_age	year	float	0	100	-89	Age at examination (years)
+x0_ager	year	integer	0	100	-89	Age at examination (years)
+x0_sex		categorical			-89	Sex

@@ -1,0 +1,6 @@
+group	label
+person	x0_sex
+person	x0_age
+person	x0_ager
+age	x0_age
+age	x0_ager

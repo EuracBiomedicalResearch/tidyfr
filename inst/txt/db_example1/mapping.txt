@@ -1,0 +1,3 @@
+label	code	value
+x0_sex	1	Male
+x0_sex	2	Female

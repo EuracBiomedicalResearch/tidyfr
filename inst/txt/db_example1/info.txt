@@ -1,0 +1,5 @@
+key	description
+name	CHRIS baseline
+description	CHRIS baseline dataset: General information (test version)
+version	1.0.0
+date	2021-07-01
