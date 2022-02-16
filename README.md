@@ -20,3 +20,15 @@ files:
 - grp_labels.txt: group definition and labels.
 - mappings.txt: category definitions and special values.
 
+# Definitions and how data is organized
+
+CHRIS data is structured in the following hierarchical folder structure:
+
+- CHRIS data path: base folder containing one or more of
+  - CHRIS data release: folder with data from a specific release containing one
+    or more:
+	- CHRIS modules: a folder containing data in the new CHRIS textual dataset
+      format.
+
+Data from the CHRIS questionnaire data for the CHRIS baseline release would thus
+be available in a folder `/CHRIS/CHRIS-baseline/Interview-data`.
