@@ -1,5 +1,18 @@
 ex1 <- system.file("txt", "db_example1", package = "chrisr")
 
+test_that("chrisDataModules works", {
+    res <- chrisDataModules(tempdir())
+    expect_equal(res, character())
+
+    path <- system.file("txt", package = "chrisr")
+    expect_warning(res <- chrisDataModules(path), "db_example2")
+    expect_equal(res, "db_example1")
+
+    path <- system.file(".", package = "chrisr")
+    expect_warning(res <- chrisDataModules(path), "valid")
+    expect_equal(res, character())
+})
+
 test_that(".check_dataset_content works", {
     dr <- system.file("txt", "db_example1", package = "chrisr")
     expect_true(.check_dataset_content(dr))

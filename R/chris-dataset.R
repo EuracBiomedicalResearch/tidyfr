@@ -1,6 +1,35 @@
 #' Functions to track, check and read CHRIS data sets/directories
 #'
 #' @noRd
+NULL
+
+#' Lists all available data modules from a CHRIS release.
+#'
+#' @param release `character(1)` defining the CHRIS data release.
+#'
+#' @param path `character(1)` defining the full path of the release directory
+#'     containing the modules.
+#'
+#' @return `character` with the names of the CHRIS data sets (modules).
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+chrisDataModules <- function(release = chrisDataRelease(), path = character()) {
+    if (!length(path))
+        path <- file.path(chrisDataPath(), release)
+    dirs <- list.dirs(path, full.names = TRUE, recursive = FALSE)
+    ## check for each folder if it's a valid dataset and return it. Warning for other folders.
+    is_ok <- vapply(dirs, .check_dataset_content,
+                    stop = FALSE, FUN.VALUE = logical(1))
+    failed <- dirs[!is_ok]
+    if (length(failed))
+        warning("The following folders do not represent ",
+                "valid CHRIS data sets: ",
+                paste0("'", basename(failed), "'", collapse = ", "))
+    basename(dirs[is_ok])
+    ## Maybe extract some info also from within the module? e.g. it's name?
+}
 
 #' @param x `character(1)` representing the path which contains the CHRIS
 #'     data files.
@@ -8,9 +37,9 @@
 #' @param stop `logical(1)` to enable *silent mode*. If `FALSE` (the default)
 #'     an error will cause a `stop` call. If `TRUE` a `logical(1)` is returned
 #'     whether the data set is valid or not.
-#' 
+#'
 #' @return `logical(1)` whether the data set is valid.
-#' 
+#'
 #' @author Johannes Rainer
 #'
 #' @noRd
@@ -48,6 +77,9 @@
     !length(msgs)
 }
 
+#' @importFrom utils read.table
+#'
+#' @noRd
 .read_dataset_file <- function(x, name) {
     suppressWarnings(
         read.table(paste0(x, "/", name, ".txt"), sep = "\t", header = TRUE))
@@ -153,11 +185,11 @@
 }
 
 #' Check that we have for all categorical variables the correct encodings.
-#' 
+#'
 #' @noRd
 .valid_mapping_category_codes <- function(data, mapping, stop = TRUE) {
     msgs <- character()
-    maps <- split(mapping$code, map$label)
+    maps <- split(mapping$code, mapping$label)
     for (variable in names(maps)) {
         uvals <- unique(data[, variable])
         if (!all(uvals) %in% maps[[variable]])
@@ -168,7 +200,3 @@
         stop(msgs)
     msgs
 }
-
-#' Function to read the data, and format the columns correctly.
-
-#' Function to read the annotation file for a specific data set.
