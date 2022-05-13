@@ -137,12 +137,17 @@ NULL
 
 #' data:
 #' - column aid required
+#' - columns contain supported data types
 #'
 #' @noRd
 .valid_data <- function(x, stop = TRUE) {
     msgs <- character()
     if (!any(colnames(x) == "aid"))
         msgs <- c(msgs, "data lacks required column 'aid'")
+    dtypes <- vapply(x, function(z) class(z)[1L], character(1))
+    if (length(miss <- dtypes[!dtypes %in% names(.LABEL_DATA_TYPES)]))
+        msgs <- c(msgs, paste0("data contains columns with unsupported data ",
+                               "types: ", paste0(miss, collapse = ", ")))
     if (stop && length(msgs))
         stop(msgs)
     msgs
@@ -236,7 +241,7 @@ NULL
     msgs <- character()
     maps <- split(mapping$code, mapping$label)
     for (variable in names(maps)) {
-        uvals <- unique(data[, variable])
+        uvals <- as.integer(unique(data[, variable]))
         if (!all(uvals %in% maps[[variable]]))
             msgs <- c(msgs, paste0("Categorical variable '", variable,
                                    "' has values without encoding."))
@@ -255,8 +260,9 @@ NULL
     if (length(cats)) {
         miss <- which(!cats %in% mapping$label)
         if (length(miss))
-            msgs <- c(msgs, paste0("Missing encoding for categorical variables: ",
-                      paste0("\"", cats[miss], "\"", collapse = ", ")))
+            msgs <- c(msgs,
+                      paste0("Missing encoding for categorical variables: ",
+                             paste0("\"", cats[miss], "\"", collapse = ", ")))
     }
     if (stop && length(msgs))
         stop(msgs)
@@ -278,9 +284,6 @@ NULL
         stop(msgs)
     msgs
 }
-
-
-
 
 #' groups does not contain labels that are not in data
 #'

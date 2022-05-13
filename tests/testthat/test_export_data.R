@@ -118,7 +118,7 @@ test_that(".replace_na_data works", {
     expect_equal(res$b, c(4, -89, -89, 4))
 })
 
-test_that".data_min_max works", {
+test_that(".data_min_max works", {
     data <- data.frame(aid = 1:4, a = c(3, 5, NA, 5), b = c(4, NA, NA, 4),
                        c = FALSE, d = "other")
     res <- .data_min_max(data)
@@ -129,7 +129,8 @@ test_that".data_min_max works", {
 })
 
 test_that("export_ctff works", {
-    pth <- "/Users/jo/Desktop/"
+    pth <- tempdir()
+
     expect_error(export_ctff(), "'name'")
     expect_error(export_ctff(name = "a"), "'version'")
     res <- export_ctff(name = "a", version = "0.0.1", path = pth)
@@ -153,5 +154,44 @@ test_that("export_ctff works", {
                                   levels = c("b", "a", "d")),
                        d = c(4, 2, NA, 1, 1))
     res <- export_ctff(data = data, name = "a", version = "0.0.2", path = pth)
+    expect_length(res, 1)
+    expect_true(.check_dataset_content(res))
+})
 
+test_that("labels_from_data works", {
+    data <- data.frame(aid = as.character(1:5),
+                       a = c(12, 34, NA, 45, 12),
+                       b = c(TRUE, FALSE, TRUE, FALSE, FALSE),
+                       c = "other",
+                       f = factor(c("a", "b", "b", "a", "d"),
+                                  levels = c("b", "a", "d")),
+                       d = c(4L, 2L, NA_integer_, 1L, 1L))
+    res <- labels_from_data(data)
+    expect_equal(colnames(res), c("label", "unit", "type", "min", "max",
+                                  "missing", "description"))
+    expect_equal(res$label, colnames(data)[-1L])
+    expect_equal(res$type, c("float", "boolean", "character", "categorical",
+                             "integer"))
+
+    data <- .empty_data()
+    res <- labels_from_data(data)
+    expect_equal(colnames(res), c("label", "unit", "type", "min", "max",
+                                  "missing", "description"))
+})
+
+test_that("mapping_from_data works", {
+    data <- data.frame(aid = 1:5,
+                       a = factor(c("a", "b", "b", "d", "a")),
+                       b = factor(c("a", "b", "b", "d", "a"),
+                                  levels = c("d", "b", "a")))
+    res <- mapping_from_data(data)
+    expect_equal(colnames(res), c("label", "code", "value"))
+    expect_equal(res$label, c("a", "a", "a", "b", "b", "b"))
+    expect_equal(res$code, c(1:3, 1:3))
+    expect_equal(res$value, c("a", "b", "d", "d", "b", "a"))
+
+    data <- .empty_data()
+    res <- mapping_from_data(data)
+    expect_equal(colnames(res), c("label", "code", "value"))
+    expect_true(nrow(res) == 0)
 })

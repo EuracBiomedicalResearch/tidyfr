@@ -28,6 +28,9 @@ test_that(".data, .valid_data works", {
     data$aid <- NULL
     expect_error(.valid_data(data), "lacks required")
     expect_true(length(.valid_data(data, stop = FALSE)) == 1)
+
+    data <- data.frame(aid = 1:3, b = 3, c = 4L, d = "a", e = factor(1:3))
+    expect_length(.valid_data(data, stop = FALSE), 0)
 })
 
 test_that(".groups, .valid_groups works", {
