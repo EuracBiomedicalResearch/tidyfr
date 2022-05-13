@@ -25,10 +25,11 @@ files:
 CHRIS data is structured in the following hierarchical folder structure:
 
 - CHRIS data path: base folder containing one or more of
-  - CHRIS data release: folder with data from a specific release containing one
-    or more:
-	- CHRIS modules: a folder containing data in the new CHRIS textual dataset
-      format.
+  - CHRIS modules: a folder bundling all data for a certain module containing
+    one or more:
+    - Module version: a folder defining the version containing one:
+	  - CHRIS data: a folder containing data in the new CHRIS textual dataset
+        format.
 
 Data from the CHRIS questionnaire data for the CHRIS baseline release would thus
-be available in a folder `/CHRIS/CHRIS-baseline/Interview-data`.
+be available in a folder `/CHRIS/Interview-data/version_1.0/Interview-data`.

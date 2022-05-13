@@ -1,6 +1,6 @@
 Package: chrisr
 Title: R Interface for CHRIS Data
-Version: 0.99.0
+Version: 0.99.1
 Description: The chrisr package provides an R interface to retrieve CHRIS data
     sets in a structured way. The package takes care to correctly format the
     various data types, implements solutions for handling of different encodings
