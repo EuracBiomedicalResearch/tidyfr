@@ -1,9 +1,14 @@
 # The R interface to CHRIS data
 
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![R-CMD-check-bioc](https://github.com/EuracBiomedicalResearch/chrisr/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/EuracBiomedicalResearch/chrisr/actions?query=workflow%3AR-CMD-check-bioc)
+[![codecov.io](http://codecov.io/github/EuracBiomedicalResearch/chrisr/coverage.svg?branch=main)](http://codecov.io/github/EuracBiomedicalResearch/chrisr?branch=main)
+[![license](https://img.shields.io/badge/license-Artistic--2.0-brightgreen.svg)](https://opensource.org/licenses/Artistic-2.0)
+
 `chrisr` provides an interface to retrieve CHRIS data from its new data storage
 format. The main properties of this interface are:
-- Retrieve data for a particular data release.
-- Extract data for specific data domains.
+
+- Retrieve data for a particular version of a data module.
 - Return the data as `data.frame` with all variables in their correct data type.
 
 # CHRIS data format
@@ -32,4 +37,4 @@ CHRIS data is structured in the following hierarchical folder structure:
         format.
 
 Data from the CHRIS questionnaire data for the CHRIS baseline release would thus
-be available in a folder `/CHRIS/Interview-data/version_1.0/Interview-data`.
+be available in a folder `/CHRIS/Interview-data/version_1.0/data`.
