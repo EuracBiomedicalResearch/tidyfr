@@ -101,6 +101,46 @@
 #' @author Johannes Rainer
 #'
 #' @export
+#'
+#' @examples
+#'
+#' ## Exporting a test data set. Creating a *data* data.frame with data on
+#' ## 5 individuals.
+#' d <- data.frame(
+#'     aid = c("00101", "00102", "00103", "00104", "00105"),
+#'     x0_sex = factor(c("Male", "Female", "Female", NA, "Male")),
+#'     x0_age = c(45, 54, 33, 36, 66),
+#'     x0_weight = c(78.5, 57.2, 55.2, 67.9, 84.2))
+#'
+#' ## Generate a *labels* data.frame from the data
+#' l <- labels_from_data(d)
+#' l
+#'
+#' ## Fill missing information to labels
+#' l$unit <- c(NA, "Year", "kg")
+#' l$description <- c("Sex", "Age", "Weight")
+#'
+#' ## Generate a *mapping* data.frame from data
+#' m <- mapping_from_data(d)
+#' m
+#'
+#' ## Create a simple grouping of all variables into a "general information"
+#' ## group
+#' g <- data.frame(
+#'     group = c("ginfo", "ginfo", "ginfo"),
+#'     label = c("x0_sex", "x0_age", "x0_weight"))
+#'
+#' ## Define a description for the group
+#' gl <- data.frame(group = "ginfo", description = "General information")
+#'
+#' ## Now export all data to a temporary folder
+#' path <- tempdir()
+#'
+#' ## Export the data specifying the name of the module, the version and other
+#' ## information
+#' export_ctff(name = "test_data", description = "Simple test data.",
+#'     version = "1.0.0", date = date(), path = path, data = d,
+#'     groups = g, grp_labels = gl, labels = l, mapping = m)
 export_ctff <- function(name = character(), description = character(),
                        version = character(), date = character(),
                        path = ".", data = data.frame(), groups = data.frame(),
@@ -259,7 +299,7 @@ mapping_from_data <- function(data) {
                   "description\t", description, "\n",
                   "version\t", version, "\n",
                   "date\t", date, "\n",
-                  "export_data\t", date(), "\n",
+                  "export_date\t", date(), "\n",
                   "export_info\texported with chrisr version ",
                   packageVersion("chrisr"), "\n")
     writeLines(out, con = file.path(path, "info.txt"))

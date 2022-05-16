@@ -242,7 +242,7 @@ NULL
     maps <- split(mapping$code, mapping$label)
     for (variable in names(maps)) {
         uvals <- as.integer(unique(data[, variable]))
-        if (!all(uvals %in% maps[[variable]]))
+        if (!all(uvals[!is.na(uvals)] %in% maps[[variable]]))
             msgs <- c(msgs, paste0("Categorical variable '", variable,
                                    "' has values without encoding."))
     }

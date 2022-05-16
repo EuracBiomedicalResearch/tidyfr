@@ -1,5 +1,10 @@
 #' Functionality to deal with CHRIS releases, base CHRIS data path etc.
 #'
+#' CHRIS data is organized in the following way:
+#'
+#' <CHRIS base path>/module/version/data
+#'                                  doc
+#'
 #' @noRd
 NULL
 
