@@ -2,7 +2,7 @@
 #'
 #' CHRIS data is organized in the following way:
 #'
-#' <CHRIS base path>/module/version/data
+#' CHRIS base path/module/version/data
 #'                                  doc
 #'
 #' @noRd

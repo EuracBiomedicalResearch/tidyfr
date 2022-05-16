@@ -211,6 +211,8 @@ export_ctff <- function(name = character(), description = character(),
 }
 
 #' @export
+#'
+#' @rdname export_ctff
 labels_from_data <- function(data, na = -89) {
     .valid_data(data, stop = TRUE)
     dtypes <- vapply(data, function(z) class(z)[1L], character(1))
@@ -224,6 +226,8 @@ labels_from_data <- function(data, na = -89) {
 }
 
 #' @export
+#'
+#' @rdname export_ctff
 mapping_from_data <- function(data) {
     .valid_data(data, stop = TRUE)
     dtypes <- vapply(data, function(z) class(z)[1L], character(1))

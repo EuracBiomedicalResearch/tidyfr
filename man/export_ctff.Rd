@@ -121,6 +121,10 @@ export_ctff(
   mapping = mapping_from_data(data),
   na = -89
 )
+
+labels_from_data(data, na = -89)
+
+mapping_from_data(data)
 }
 \arguments{
 \item{name}{\strong{required} \code{character(1)} with the name of the data module.}
