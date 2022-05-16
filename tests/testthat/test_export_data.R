@@ -62,6 +62,21 @@ test_that(".export_labels works", {
                                   "missing", "description"))
     expect_equal(res$label, 1:10)
     expect_true(all(res$type == "numeric"))
+
+    ## Export of additional columns.
+    df <- data.frame(label = 1:4, other_col = "a",
+                     next_col = c("d", "a", "b", "c"))
+    .export_labels(path = fl, labels = df)
+    res <- read.table(file.path(fl, "labels.txt"), sep = "\t", header = TRUE)
+    expect_equal(colnames(res), c("label", "unit", "type", "min", "max",
+                                  "missing", "description"))
+    expect_true(file.exists(file.path(fl, "labels_add.txt")))
+    res <- read.table(file.path(fl, "labels_add.txt"), sep = "\t",
+                      header = TRUE)
+    expect_equal(colnames(res), c("label", "other_col", "next_col"))
+    expect_equal(res$label, 1:4)
+    expect_equal(res$other_col, rep("a", 4))
+    expect_equal(res$next_col, c("d", "a", "b", "c"))
 })
 
 test_that(".empty_groups works", {

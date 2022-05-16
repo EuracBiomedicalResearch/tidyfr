@@ -320,8 +320,14 @@ mapping_from_data <- function(data) {
 #'
 #' @noRd
 .export_labels <- function(path = ".", labels = data.frame()) {
-    write.table(.fill_labels(labels), sep = "\t", quote = FALSE, na = "",
+    labels <- .fill_labels(labels)
+    cn <- c("label", "unit", "type", "min", "max", "missing", "description")
+    cn_add <- c("label", colnames(labels)[!colnames(labels) %in% cn])
+    write.table(labels[, cn], sep = "\t", quote = FALSE, na = "",
                 row.names = FALSE, file = file.path(path, "labels.txt"))
+    if (length(cn_add) > 1L)
+        write.table(labels[, cn_add], sep = "\t", quote = FALSE, na = "",
+                    row.names = FALSE, file = file.path(path, "labels_add.txt"))
 }
 
 .export_groups <- function(path = ".", groups = .empty_groups()) {
