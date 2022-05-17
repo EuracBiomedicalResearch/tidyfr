@@ -16,10 +16,13 @@
     <loc>/reference/CTFF.html</loc>
   </url>
   <url>
+    <loc>/reference/DataModule.html</loc>
+  </url>
+  <url>
     <loc>/reference/chris-SummarizedExperiment.html</loc>
   </url>
   <url>
-    <loc>/reference/chrisDataPath.html</loc>
+    <loc>/reference/chris_data_path.html</loc>
   </url>
   <url>
     <loc>/reference/export_ctff.html</loc>
