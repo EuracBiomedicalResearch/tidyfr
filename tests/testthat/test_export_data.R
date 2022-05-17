@@ -158,7 +158,7 @@ test_that("export_ctff works", {
     tmp <- .data(res)
     expect_true(is.data.frame(tmp))
     expect_equal(colnames(tmp), "aid")
-    expect_true(.check_dataset_content(res))
+    expect_true(.valid_data_directory(res))
 
     ## Now with real data.
     data <- data.frame(aid = as.character(1:5),
@@ -170,7 +170,7 @@ test_that("export_ctff works", {
                        d = c(4, 2, NA, 1, 1))
     res <- export_ctff(data = data, name = "a", version = "0.0.2", path = pth)
     expect_length(res, 1)
-    expect_true(.check_dataset_content(res))
+    expect_true(.valid_data_directory(res))
 })
 
 test_that("labels_from_data works", {

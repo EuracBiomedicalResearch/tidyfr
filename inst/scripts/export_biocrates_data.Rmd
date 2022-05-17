@@ -1,0 +1,106 @@
+# Export the Biocrates Metabolomics data
+
+Here we export the Biocrates-based targeted metabolomics data from CHRIS (and
+NAFLD) in the new CHRIS Textual File Format (CTFF) using the `chrisr` package.
+
+```{r}
+library(chrisr)
+library(biochristes7500)
+
+data(biochristes7500)
+```
+
+Extract the *data*, *labels* and *groups* from the `SummarizedExperiment`.
+
+```{r}
+data <- chris_data(biochristes7500, assayNames = c("concentrations", "flags"),
+                   labelPrefix = "x0pt")
+
+labels <- chris_labels(
+    biochristes7500, assayNames = c("concentrations", "flags"),
+    labelPrefix = "x0pt")
+
+groups <- chris_groups(
+    biochristes7500, assayNames = c("concentrations", "flags"),
+    labelPrefix = "x0pt")
+```
+
+We next replace the integer-type flags with `factor`s to better encode the
+quality information.
+
+```{r}
+cats <- c(`0` = "OK", `-9` = "Removed because of technical reason",
+          `-1` = "Below lower level of quantification",
+          `1` = "Above upper level of quantification",
+          `-2` = "Below level of detection")
+idx <- grep("a$", colnames(data))
+for (i in idx)
+    data[, i] <- unname(factor(cats[as.character(data[, i])], levels = cats))
+```
+
+Fixing and adapting the *labels*.
+
+```{r}
+labels$type[labels$type == "integer"] <- "categorical"
+labels <- labels[, !colnames(labels) %in%
+                   c("analyte_lloq", "analyte_uloq", "analyte_lod",
+                     "analyte_blessed_min", "analyte_blessed_max")]
+```
+
+Adding a grouping for each concentration-quality pair.
+
+```{r}
+grp_labels <- data.frame(group = unique(groups$group),
+                         description = unique(groups$group))
+grp_labels$description <- sub("analyte_", "Values for ",
+                              grp_labels$description)
+grp_labels$description[1L] <- "Metabolite concentrations"
+grp_labels$description[2L] <- "Measurement quality information"
+```
+
+Exporting the data.
+
+```{r}
+meta <- metadata(biochristes7500)
+data_version <- meta$value[meta$name == "version"]
+data_date <- meta$value[meta$name == "data_date"]
+
+export_ctff(name = "metabolomics_p180",
+            description = "Biocrates p180-based targeted metabolomics data",
+            version = "0.99.0",
+            date = data_date,
+            path = "/Users/jo/data/CHRIS/chris_baseline",
+            data = data, groups = groups, grp_labels = grp_labels,
+            labels = labels)
+```
+
+## Evaluating export
+
+Check that data is exported correctly.
+
+```{r}
+p <- "/Users/jo/data/CHRIS/chris_baseline/metabolomics_p180/0.99.0/data/"
+chrisr:::.check_dataset_content(p)
+
+tmp <- chrisr:::.data(p)
+mat <- as.matrix(t(tmp[, seq_len(nrow(biochristes7500)) + 1]))
+mat[mat == -89] <- NA
+
+library(testthat)
+expect_equal(unname(mat), unname(assay(biochristes7500)))
+
+flags <- as.matrix(t(tmp[, seq_len(nrow(biochristes7500)) + 176]))
+flags[flags == 1] <- 0
+flags[flags == 2] <- -9
+flags[flags == 3] <- -1
+flags[flags == 4] <- 1
+flags[flags == 5] <- -2
+
+expect_equal(unname(flags), unname(assay(biochristes7500, "flags")))
+```
+
+# Session information
+
+```{r}
+sessionInfo()
+```

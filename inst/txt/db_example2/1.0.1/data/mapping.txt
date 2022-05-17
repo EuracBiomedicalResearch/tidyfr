@@ -1,0 +1,22 @@
+label	code	value
+x0_birthpc	1	Vinschgau district
+x0_birthpc	2	South Tyrol (except Vinschgau)
+x0_birthpc	3	Italy (except South Tyrol)
+x0_birthpc	4	German-speaking countries
+x0_birthpc	5	Other European countries
+x0_birthpc	6	Non-European countries
+x0_residpc	1	GLURNS
+x0_residpc	2	GRAUN I. V.
+x0_residpc	3	KASTELBELL
+x0_residpc	4	LAAS
+x0_residpc	5	LATSCH
+x0_residpc	6	MALS
+x0_residpc	7	MARTELL
+x0_residpc	8	PRAD A. ST.
+x0_residpc	9	SCHLANDERS
+x0_residpc	10	SCHLUDERNS
+x0_residpc	11	SCHNALS
+x0_residpc	12	STILFS
+x0_residpc	13	TAUFERS I. M.
+x0_sex	1	Male
+x0_sex	2	Female

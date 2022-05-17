@@ -39,9 +39,13 @@ NULL
     label <- paste0(label_prefix, .integer_string(seq_len(nrow(x))))
     la <- length(assayNames.)
     suff <- c("", letters[seq_len(la - 1L)])
-    data.frame(group = rep(grps, each = length(label)),
-               label = paste0(rep(label, length(suff)),
-                              rep(suff, each = length(label))))
+    data.frame(group = c(rep(grps, each = length(label)),
+                         rep(paste0("analyte_", label), each = length(suff))),
+               label = c(paste0(rep(label, length(suff)),
+                                rep(suff, each = length(label))),
+                         paste0(rep(label, each = length(suff)),
+                                rep(suff, length(label)))))
+
 }
 
 .integer_string <- function(x) {

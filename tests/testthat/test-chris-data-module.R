@@ -1,25 +1,45 @@
-ex1 <- system.file("txt", "db_example1", package = "chrisr")
+ex1 <- system.file("txt", "db_example1", "1.0.0", "data", package = "chrisr")
+ex2 <- system.file("txt", "db_example2", "1.0.0", "data", package = "chrisr")
+ex3 <- system.file("txt", "db_example2", "1.0.1", "data", package = "chrisr")
 
-## test_that("chrisDataModules works", {
-##     res <- chrisr:::chrisDataModules(tempdir())
-##     expect_equal(res, character())
+test_that(".valid_data_directory works", {
+    expect_match(.valid_data_directory(tempdir()), "missing")
+    expect_error(.valid_data_directory(tempdir(), stop = TRUE), "missing")
 
-##     path <- system.file("txt", package = "chrisr")
-##     expect_warning(res <- chrisr:::chrisDataModules(path), "db_example2")
-##     expect_equal(res, "db_example1")
+    expect_true(.valid_data_directory(ex1))
+    expect_true(.valid_data_directory(ex3))
+})
 
-##     path <- system.file(".", package = "chrisr")
-##     expect_warning(res <- chrisr:::chrisDataModules(path), "valid")
-##     expect_equal(res, character())
-## })
+test_that("DataModule validator works", {
+    m <- new("DataModule")
+    expect_true(validObject(m))
+    m@path <- "not there"
+    expect_error(validObject(m), "not exist")
+})
 
-test_that(".check_dataset_content works", {
-    dr <- system.file("txt", "db_example1", package = "chrisr")
-    expect_true(.check_dataset_content(dr))
+test_that("moduleName works", {
+    m <- new("DataModule", name = "the name")
+    expect_equal(moduleName(m), "the name")
+})
 
-    dr <- system.file("txt", package = "chrisr")
-    expect_error(.check_dataset_content(dr, stop = TRUE), "missing one")
-    expect_false(.check_dataset_content(dr, stop = FALSE))
+test_that("moduleVersion works", {
+    m <- new("DataModule", version = "1.0.0")
+    expect_equal(moduleVersion(m), "1.0.0")
+})
+
+test_that("moduleDescription works", {
+    m <- new("DataModule", description = "something")
+    expect_equal(moduleDescription(m), "something")
+})
+
+test_that("moduleDate works", {
+    m <- new("DataModule", date = "2022-05")
+    expect_equal(moduleDate(m), "2022-05")
+})
+
+test_that("modulePath works", {
+    m <- new("DataModule", path = tempdir())
+    expect_equal(modulePath(m), tempdir())
 })
 
 test_that(".data, .valid_data works", {

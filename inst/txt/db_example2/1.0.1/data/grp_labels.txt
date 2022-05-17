@@ -1,0 +1,7 @@
+group	description
+person	Personal data
+participation	Participation-related data
+age	Age
+birthdate	Birth date
+examdate	Examination date
+notes	Notes

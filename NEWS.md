@@ -1,5 +1,9 @@
 # `chrisr` 0.99
 
+## Changes in 0.99.4
+
+- Add `DataModule` and code to represent CHRIS Data modules.
+
 ## Changes in 0.99.3
 
 - Add functionality to extract CTFF-compliant data from a

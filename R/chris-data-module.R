@@ -1,78 +1,127 @@
-#' Functions to track, check and read CHRIS data sets/directories
+#' @title CHRIS Data Modules
 #'
-#' @noRd
+#' @name DataModule
+#'
+#' @aliases DataModule-class
+#'
+#' @description
+#'
+#' A CHRIS Data Module provides the data of one specific module, which can be
+#' the interview, clinical blood parameters or the metabolomics or proteomics
+#' data sets. The actual data from a module is stored in the CHRIS Textual File
+#' Format (CTFF - see [CTFF] for more details).
+#'
+#' The `chrisr` package represents a data module with the `DataModule` object
+#' which provides all necessary functionality to import data of a module and to
+#' format it properly for R.
+#'
+#' @section Loading a module:
+#'
+#' Available data modules in a certain path can be listed using the
+#' [list_data_modules()] function.
+#'
+#' @section Accessing properties and data from a module:
+#'
+#' - `moduleName`: returns the name of a module.
+#' - `modulePath`: returns the (full) file path to the data module.
+#' - `moduleVersion`: returns the version of the data module.
+#' - `moduleDescription`: returns the description of the module.
+#' - `moduleDate`: returns the date of the module.
+#'
+#' @param object A `DataModule` object.
+#'
+#' @return See the individual function description.
+#'
+#' @author Johannes Rainer
+#'
+#' @exportClass DataModule
 NULL
 
-#' Lists all available data modules from a CHRIS release.
-#'
-#' @param release `character(1)` defining the CHRIS data release.
-#'
-#' @param path `character(1)` defining the full path of the release directory
-#'     containing the modules.
-#'
-#' @return `character` with the names of the CHRIS data sets (modules).
-#'
-#' @author Johannes Rainer
-#'
-#' @noRd
-chrisDataModules <- function(release = chrisDataRelease(), path = character()) {
-    if (!length(path))
-        path <- file.path(chrisDataPath(), release)
-    dirs <- list.dirs(path, full.names = TRUE, recursive = FALSE)
-    ## check for each folder if it's a valid dataset and return it. Warning for other folders.
-    is_ok <- vapply(dirs, .check_dataset_content,
-                    stop = FALSE, FUN.VALUE = logical(1))
-    failed <- dirs[!is_ok]
-    if (length(failed))
-        warning("The following folders do not represent ",
-                "valid CHRIS data sets: ",
-                paste0("'", basename(failed), "'", collapse = ", "))
-    basename(dirs[is_ok])
-    ## Maybe extract some info also from within the module? e.g. it's name?
-}
+setClass("DataModule",
+         slots = c(name = "character",
+                   path = "character",
+                   version = "character",
+                   description = "character",
+                   date = "character"),
+         prototype = c(name = character(),
+                       path = character(),
+                       version = character(),
+                       description = character(),
+                       date = character()))
 
-#' @param x `character(1)` representing the path which contains the CHRIS
-#'     data files.
+setValidity("DataModule", function(object) {
+    msg <- character()
+    if (length(modulePath(object)) && !dir.exists(modulePath(object)))
+        msg <- c(msg, paste0("Module path \"", modulePath(object),
+                             "\" does not exist."))
+    if (!length(msg)) TRUE
+    else msg
+})
+
+#' @rdname DataModule
 #'
-#' @param stop `logical(1)` to enable *silent mode*. If `FALSE` (the default)
-#'     an error will cause a `stop` call. If `TRUE` a `logical(1)` is returned
-#'     whether the data set is valid or not.
+#' @export
+moduleName <- function(object) object@name
+
+#' @rdname DataModule
 #'
-#' @return `logical(1)` whether the data set is valid.
+#' @export
+modulePath <- function(object) object@path
+
+#' @rdname DataModule
 #'
-#' @author Johannes Rainer
+#' @export
+moduleVersion <- function(object) object@version
+
+#' @rdname DataModule
 #'
-#' @noRd
-.check_dataset_content <- function(x, stop = TRUE) {
-    fls <- dir(x)
-    if (!all(basename(fls) %in% c("data.txt", "groups.txt", "grp_labels.txt",
-                                  "info.txt", "labels.txt", "mapping.txt"))) {
-        if (stop)
-            stop("Folder ", x, " is missing one or more required data files.")
-        else return(FALSE)
-    }
-    ## Test content of various data files.
-    data <- .data(x)
+#' @export
+moduleDescription <- function(object) object@description
+
+#' @rdname DataModule
+#'
+#' @export
+moduleDate <- function(object) object@date
+
+.valid_data_directory <- function(path, stop = FALSE) {
+    fls <- dir(path)
     msgs <- character()
-    msgs <- c(msgs, .valid_data(data, stop = stop))
-    msgs <- c(msgs, .valid_info(.info(x), stop = stop))
-    labels <- .labels(x)
-    msgs <- c(msgs, .valid_labels(labels, stop = stop))
-    msgs <- c(msgs, .valid_labels_data_types(labels, stop = stop))
-    msgs <- c(msgs, .valid_data_labels(data, labels, stop = stop))
-    mapping <- .mapping(x)
-    msgs <- c(msgs, .valid_mapping(mapping, stop = stop))
-    msgs <- c(msgs, .valid_data_mapping_category_codes(data, mapping, stop))
-    msgs <- c(msgs, .valid_labels_mapping_categories(labels, mapping, stop))
-    groups <- .groups(x)
-    msgs <- c(msgs, .valid_groups(groups, stop = stop))
-    msgs <- c(msgs, .valid_data_groups(data, groups, stop = stop))
-    grp_labels <- .grp_labels(x)
-    msgs <- c(msgs, .valid_grp_labels(grp_labels, stop = stop))
-    msgs <- c(msgs, .valid_groups_grp_labels(groups, grp_labels, stop = stop))
-    if (stop && length(msgs))
-        stop(msgs)
-    !length(msgs)
+    if (!all(c("data.txt", "groups.txt", "grp_labels.txt",
+               "info.txt", "labels.txt", "mapping.txt") %in% basename(fls))) {
+        msgs <- c(msgs, paste0("Folder ", path, " is missing one or more",
+                               " required data files."))
+    }
+    if (length(msgs)) {
+        if (stop)
+            stop(msgs)
+        else return(msgs)
+    }
+    ## Test individual files; stop/return after each (because following tests
+    ## depend on these).
+    if (length(msgs <- .valid_info(.info(path), stop = stop))) return(msgs)
+    data <- .data(path)
+    if (length(msgs <- .valid_data(data, stop = stop))) return(msgs)
+    labels <- .labels(path)
+    if (length(msgs <- .valid_labels(labels, stop = stop))) return(msgs)
+    if (length(msgs <- .valid_labels_data_types(labels, stop = stop)))
+        return(msgs)
+    if (length(msgs <- .valid_data_labels(data, labels, stop = stop)))
+        return(msgs)
+    mapping <- .mapping(path)
+    if (length(msgs <- .valid_mapping(mapping, stop = stop))) return(msgs)
+    if (length(msgs <- .valid_data_mapping_category_codes(data, mapping, stop)))
+        return(msgs)
+    if (length(msgs <- .valid_labels_mapping_categories(labels, mapping, stop)))
+        return(msgs)
+    groups <- .groups(path)
+    if (length(msgs <- .valid_groups(groups, stop = stop))) return(msgs)
+    if (length(msgs <- .valid_data_groups(data, groups, stop = stop)))
+        return(msgs)
+    grp_labels <- .grp_labels(path)
+    if (length(msgs <- .valid_grp_labels(grp_labels, stop = stop))) return(msgs)
+    if (length(msgs <- .valid_groups_grp_labels(
+                   groups, grp_labels, stop = stop))) return(msgs)
+    TRUE
 }
 
 #' @importFrom utils read.table
