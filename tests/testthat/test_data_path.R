@@ -6,8 +6,6 @@ test_that("data_path works", {
 })
 
 test_that("list_data_modules works", {
-    res <- list_data_modules(tempdir())
-
     expect_error(list_data_modules("not"), "not")
 
     res <- list_data_modules(system.file("txt", package = "tidyfr"))
