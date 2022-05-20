@@ -3,6 +3,8 @@
 \name{DataModule}
 \alias{DataModule}
 \alias{DataModule-class}
+\alias{show,DataModule-method}
+\alias{data_module}
 \alias{moduleName}
 \alias{modulePath}
 \alias{moduleVersion}
@@ -10,6 +12,8 @@
 \alias{moduleDate}
 \title{Data Modules}
 \usage{
+data_module(name = character(), version = character(), path = data_path())
+
 moduleName(object)
 
 modulePath(object)
@@ -21,6 +25,15 @@ moduleDescription(object)
 moduleDate(object)
 }
 \arguments{
+\item{name}{For \code{data_module}: \code{character(1)} defining the name of the
+module to load.}
+
+\item{version}{For \code{data_module}: \code{character(1)} defining the version of the
+module to load.}
+
+\item{path}{For \code{data_module}: \code{character(1)} defining the path where data
+modules are stored.}
+
 \item{object}{A \code{DataModule} object.}
 }
 \value{
@@ -41,6 +54,13 @@ format it properly for R.
 
 Available data modules in a certain path can be listed using the
 \code{\link[=list_data_modules]{list_data_modules()}} function.
+\itemize{
+\item \code{data_module}: load a specific data module. The name and version of the
+data module to load needs to be specified with parameters \code{name} and
+\code{version} respectively. Parameter \code{path} can be used to set the base path
+where the data module can be found. The function returns an instance of
+\code{DataModule}.
+}
 }
 
 \section{Accessing properties and data from a module}{
@@ -54,6 +74,21 @@ Available data modules in a certain path can be listed using the
 }
 }
 
+\examples{
+
+## List available test data modules provided by the tidyfr package
+pth <- system.file("txt", package = "tidyfr")
+list_data_modules(pth)
+
+## Load one data module
+mdl <- data_module(name = "db_example2", version = "1.0.1", path = pth)
+mdl
+
+## Get the name, description and version of the module
+moduleName(mdl)
+moduleDescription(mdl)
+moduleVersion(mdl)
+}
 \author{
 Johannes Rainer
 }

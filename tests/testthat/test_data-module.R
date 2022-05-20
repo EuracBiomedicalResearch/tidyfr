@@ -199,3 +199,19 @@ test_that(".valid_groups_grp_labels works", {
 
     expect_length(.valid_groups_grp_labels(groups[1:3, ], grp_labels), 0)
 })
+
+test_that("data_module works", {
+    expect_error(data_module("other"), "'version'")
+    expect_error(data_module(), "'name'")
+    expect_error(data_module("other", "1.0.0"), "exists")
+
+    res <- data_module("db_example1", "1.0.0",
+                       system.file("txt", package = "tidyfr"))
+    expect_output(show(res), "DataModule")
+    expect_s4_class(res, "DataModule")
+
+    expect_equal(moduleName(res), "CHRIS baseline")
+    expect_equal(moduleVersion(res), "1.0.0")
+    expect_match(moduleDescription(res), "General")
+    expect_equal(moduleDate(res), "2021-07-01")
+})

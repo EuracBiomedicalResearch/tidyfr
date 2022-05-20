@@ -2,7 +2,7 @@
 #'
 #' @name DataModule
 #'
-#' @aliases DataModule-class
+#' @aliases DataModule-class show,DataModule-method
 #'
 #' @description
 #'
@@ -20,6 +20,12 @@
 #' Available data modules in a certain path can be listed using the
 #' [list_data_modules()] function.
 #'
+#' - `data_module`: load a specific data module. The name and version of the
+#'   data module to load needs to be specified with parameters `name` and
+#'   `version` respectively. Parameter `path` can be used to set the base path
+#'   where the data module can be found. The function returns an instance of
+#'   `DataModule`.
+#'
 #' @section Accessing properties and data from a module:
 #'
 #' - `moduleName`: returns the name of a module.
@@ -30,11 +36,35 @@
 #'
 #' @param object A `DataModule` object.
 #'
+#' @param name For `data_module`: `character(1)` defining the name of the
+#'     module to load.
+#'
+#' @param path For `data_module`: `character(1)` defining the path where data
+#'     modules are stored.
+#'
+#' @param version For `data_module`: `character(1)` defining the version of the
+#'     module to load.
+#'
 #' @return See the individual function description.
 #'
 #' @author Johannes Rainer
 #'
 #' @exportClass DataModule
+#'
+#' @examples
+#'
+#' ## List available test data modules provided by the tidyfr package
+#' pth <- system.file("txt", package = "tidyfr")
+#' list_data_modules(pth)
+#'
+#' ## Load one data module
+#' mdl <- data_module(name = "db_example2", version = "1.0.1", path = pth)
+#' mdl
+#'
+#' ## Get the name, description and version of the module
+#' moduleName(mdl)
+#' moduleDescription(mdl)
+#' moduleVersion(mdl)
 NULL
 
 setClass("DataModule",
@@ -56,6 +86,41 @@ setValidity("DataModule", function(object) {
                              "\" does not exist."))
     if (!length(msg)) TRUE
     else msg
+})
+
+#'@rdname DataModule
+#'
+#'@importFrom methods new
+#'
+#' @export
+data_module <- function(name = character(), version = character(),
+                        path = data_path()) {
+    if (!length(name))
+        stop("'name' needs to be specified")
+    if (!length(version))
+        stop("'version' needs to be specified")
+    module_path <- file.path(path, name, version, "data")
+    if (!dir.exists(module_path))
+        stop("No data module with that name and version exists in '", path, "'")
+    .valid_data_directory(module_path, stop = TRUE)
+    minfo <- .info(module_path)
+    new("DataModule",
+        name = minfo$description[minfo$key == "name"],
+        path = module_path,
+        version = minfo$description[minfo$key == "version"],
+        description = minfo$description[minfo$key == "description"],
+        date = minfo$description[minfo$key == "date"])
+}
+
+#' @exportMethod show
+#'
+#' @importMethodsFrom methods show
+setMethod("show", "DataModule", function(object) {
+    cat("Object of class", class(object), "\n")
+    cat(" o name:\t", moduleName(object), "\n", sep = "")
+    cat(" o version:\t", moduleVersion(object), "\n", sep = "")
+    cat(" o description:\t", moduleDescription(object), "\n", sep = "")
+    cat(" o date:\t", moduleDate(object), "\n", sep = "")
 })
 
 #' @rdname DataModule
@@ -129,7 +194,8 @@ moduleDate <- function(object) object@date
 #' @noRd
 .read_dataset_file <- function(x, name) {
     suppressWarnings(
-        read.table(paste0(x, "/", name, ".txt"), sep = "\t", header = TRUE))
+        read.table(paste0(file.path(x, name), ".txt"),
+                   sep = "\t", header = TRUE))
 }
 
 .data <- function(x) {
