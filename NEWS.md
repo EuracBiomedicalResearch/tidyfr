@@ -1,4 +1,4 @@
-# `chrisr` 0.99
+# `tidyfr` 0.99
 
 ## Changes in 0.99.4
 

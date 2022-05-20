@@ -143,13 +143,13 @@ test_that(".data_min_max works", {
     expect_equal(res$max, c(4, 5, 4, NA, NA))
 })
 
-test_that("export_ctff works", {
+test_that("export_tdf works", {
     pth <- tempdir()
 
-    expect_error(export_ctff(), "'name'")
-    expect_error(export_ctff(name = "a"), "'version'")
-    res <- export_ctff(name = "a", version = "0.0.1", path = pth)
-    expect_error(export_ctff(name = "a", version = "0.0.1", path = pth),
+    expect_error(export_tdf(), "'name'")
+    expect_error(export_tdf(name = "a"), "'version'")
+    res <- export_tdf(name = "a", version = "0.0.1", path = pth)
+    expect_error(export_tdf(name = "a", version = "0.0.1", path = pth),
                  "does already exist")
     expect_length(res, 1)
     tmp <- .info(res)
@@ -168,7 +168,7 @@ test_that("export_ctff works", {
                        f = factor(c("a", "b", "b", "a", "d"),
                                   levels = c("b", "a", "d")),
                        d = c(4, 2, NA, 1, 1))
-    res <- export_ctff(data = data, name = "a", version = "0.0.2", path = pth)
+    res <- export_tdf(data = data, name = "a", version = "0.0.2", path = pth)
     expect_length(res, 1)
     expect_true(.valid_data_directory(res))
 })

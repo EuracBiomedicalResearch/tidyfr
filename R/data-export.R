@@ -1,10 +1,10 @@
-#' @title Export data in the CHRIS Textual File Format
+#' @title Export data in the Textual Dataset Format
 #'
 #' @aliases labels_from_data mapping_from_data
 #'
-#' The `export_ctff` exports the provided data in the CHRIS textual file format
-#' (ctff). The function first creates all required folders, checks the input
-#' files and then exports the data in the ctff format (see below for more
+#' The `export_tdf` exports the provided data in the TDF format. The function
+#' first creates all required folders, checks the input
+#' files and then exports the data in the TDF format (see below for more
 #' information on this format).
 #'
 #' Automatic convertions performed by the function are:
@@ -27,10 +27,10 @@
 #' The `mapping_from_data` creates a *mapping* `data.frame` for all categorical
 #' variables in `data` (i.e. columns in `data` with data type `factor`).
 #'
-#' @section Short information on the CTFF:
+#' @section Short information on the TDF:
 #'
 #' See the official
-#' [CTFF](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format)
+#' [TDF](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format)
 #' definition for a complete description of the format.
 #'
 #' - **data**: contains the data of the various variables. Columns are
@@ -74,15 +74,15 @@
 #'     variables.
 #'
 #' @param groups `data.frame` with optional grouping of labels (variables) in
-#'     `data`. Expected columns are `"group"` and `"label"`. See the ctff
+#'     `data`. Expected columns are `"group"` and `"label"`. See the TDF
 #'     definition for details.
 #'
 #' @param grp_labels `data.frame` with the names (descriptions) of the groups
 #'     defined in `groups`.
 #'
 #' @param labels `data.frame` with *annotations* to the variables (labels) in
-#'     `data`. See the ctff definition for details. Columns `"min"`, `"max"`
-#'     and `"missing"` will be filled by the `export_ctff` function if not
+#'     `data`. See the TDF definition for details. Columns `"min"`, `"max"`
+#'     and `"missing"` will be filled by the `export_tdf` function if not
 #'     already provided. Defaults to `labels = labels_from_data()` hence creates
 #'     a *labels* `data.frame` from the provided `data`.
 #'
@@ -94,7 +94,7 @@
 #'
 #' @param na the value to represent missing values in `data`.
 #'
-#' @return `export_ctff`: (invisibly) returns a `character(1)` with the path to
+#' @return `export_tdf`: (invisibly) returns a `character(1)` with the path to
 #'     the folder where the data was stored. `labels_from_data` returns a
 #'     *labels* `data.frame` based on the data in `data`.
 #'
@@ -138,10 +138,10 @@
 #'
 #' ## Export the data specifying the name of the module, the version and other
 #' ## information
-#' export_ctff(name = "test_data", description = "Simple test data.",
+#' export_tdf(name = "test_data", description = "Simple test data.",
 #'     version = "1.0.0", date = date(), path = path, data = d,
 #'     groups = g, grp_labels = gl, labels = l, mapping = m)
-export_ctff <- function(name = character(), description = character(),
+export_tdf <- function(name = character(), description = character(),
                        version = character(), date = character(),
                        path = ".", data = data.frame(), groups = data.frame(),
                        grp_labels = data.frame(),
@@ -212,7 +212,7 @@ export_ctff <- function(name = character(), description = character(),
 
 #' @export
 #'
-#' @rdname export_ctff
+#' @rdname export_tdf
 labels_from_data <- function(data, na = -89) {
     .valid_data(data, stop = TRUE)
     dtypes <- vapply(data, function(z) class(z)[1L], character(1))
@@ -227,7 +227,7 @@ labels_from_data <- function(data, na = -89) {
 
 #' @export
 #'
-#' @rdname export_ctff
+#' @rdname export_tdf
 mapping_from_data <- function(data) {
     .valid_data(data, stop = TRUE)
     dtypes <- vapply(data, function(z) class(z)[1L], character(1))
@@ -304,8 +304,8 @@ mapping_from_data <- function(data) {
                   "version\t", version, "\n",
                   "date\t", date, "\n",
                   "export_date\t", date(), "\n",
-                  "export_info\texported with chrisr version ",
-                  packageVersion("chrisr"), "\n")
+                  "export_info\texported with tidy version ",
+                  packageVersion("tidyfr"), "\n")
     writeLines(out, con = file.path(path, "info.txt"))
 }
 

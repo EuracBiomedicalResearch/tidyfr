@@ -1,22 +1,20 @@
-setGeneric("chris_data", function(object, ...)
-    standardGeneric("chris_data"))
-setGeneric("chris_labels", function(object, ...)
-    standardGeneric("chris_labels"))
-setGeneric("chris_groups", function(object, ...)
-    standardGeneric("chris_groups"))
+setGeneric("labels", function(object, ...)
+    standardGeneric("labels"))
+setGeneric("groups", function(object, ...)
+    standardGeneric("groups"))
 
-#' @title CHRIS Textual File Format Data
+#' @title Textual Dataset Format
 #'
-#' @aliases chris_data chris_labels chris_groups
+#' @aliases data labels groups
 #'
 #' @description
 #'
-#' The `chrisr` package provides convenience and utility functions to import
-#' CHRIS data stored in the new *CHRIS Textual File Format* into R. These
+#' The `tidyfr` package provides convenience and utility functions to import
+#' data stored in the new *Textual Dateset Format* into R. These
 #' functions ensure the data is properly formatted which include the correct
 #' encoding categorical variables (`factor`s) or also missing values.
 #'
-#' CHRIS Data is structured in the following format:
+#' TDF data is structured in the following format:
 #'
 #' - **data**: contains the data of the various variables. Columns are
 #'   variables, rows study participants. Column `"aid"` contains the ID of the
@@ -35,25 +33,39 @@ setGeneric("chris_groups", function(object, ...)
 #' - **grp_labels**: contains descriptions for the *groups*.
 #'
 #' See the official
-#' [CTFF](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format)
+#' [TDF](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format)
 #' definition for a complete description of the format.
 #'
-#' @section Accessing CHRIS Data:
+#' @section Accessing Data:
 #'
 #' The following functions can be used to import CHRIS data from one of the
 #' available data modules.
 #'
-#' - `chris_data`: retrieves the *data*.
+#' - `data`: retrieves the *data*.
 #'
-#' - `chris_groups`: retrieves the grouping information for variables.
+#' - `groups`: retrieves the grouping information for variables.
 #'
-#' - `chris_labels`: retrieves additional annotation/information for specific
-#'   variables of a CHRIS module.
+#' - `labels`: retrieves additional annotation/information for specific
+#'   variables of a module.
 #'
 #' Which data is retrieved depends on the parameter `object`.
 #' See [chris-SummarizedExperiment] if `object` is a [SummarizedExperiment()].
 #'
 #' @author Johannes Rainer
 #'
-#' @name CTFF
+#' @export data
+#'
+#' @name TDF
 NULL
+
+#' @importFrom methods is
+data <- function(...) {
+    vars <- list(...)
+    if (length(vars) && inherits(vars[[1L]], "SummarizedExperiment")) {
+        names(vars)[1L] <- "x"
+        return(do.call(.data_from_SummarizedExperiment, vars, quote = TRUE))
+    }
+    if (length(vars) && is(vars[[1L]], "DataModule"))
+        cat("calling for DataModule")
+    utils::data(...)
+}

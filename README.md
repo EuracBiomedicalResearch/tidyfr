@@ -1,17 +1,19 @@
-# The R interface to CHRIS data
+# The R interface to the Textual Data Format
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![R-CMD-check-bioc](https://github.com/EuracBiomedicalResearch/chrisr/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/EuracBiomedicalResearch/chrisr/actions?query=workflow%3AR-CMD-check-bioc)
-[![codecov.io](http://codecov.io/github/EuracBiomedicalResearch/chrisr/coverage.svg?branch=main)](http://codecov.io/github/EuracBiomedicalResearch/chrisr?branch=main)
+[![R-CMD-check-bioc](https://github.com/EuracBiomedicalResearch/tidyfr/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/EuracBiomedicalResearch/tidyfr/actions?query=workflow%3AR-CMD-check-bioc)
+[![codecov.io](http://codecov.io/github/EuracBiomedicalResearch/tidyfr/coverage.svg?branch=main)](http://codecov.io/github/EuracBiomedicalResearch/tidyfr?branch=main)
 [![license](https://img.shields.io/badge/license-Artistic--2.0-brightgreen.svg)](https://opensource.org/licenses/Artistic-2.0)
 
-`chrisr` provides an interface to retrieve CHRIS data from its new data storage
-format. The main properties of this interface are:
+`tidyfr` provides an interface to retrieve data stored in the Textual Data File
+(TDF) format from the Eurac Research Institute for Biomedicine. All data files
+from the CHRIS study are stored in this format, thus, `tidyfr` allows to import
+CHRIS data. The main properties of this interface/import functionality are:
 
 - Retrieve data for a particular version of a data module.
 - Return the data as `data.frame` with all variables in their correct data type.
 
-# CHRIS data format
+# Textual Data Format
 
 A documentation for the new data format can be found
 [here](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format). In

@@ -67,29 +67,29 @@ test_that(".labels_from_SummarizedExperiment works", {
                                   colnames(rowData(se))))
 })
 
-test_that("chris_data,SummarizedExperiment works", {
-    res <- chris_data(se, assayNames = assayNames(se))
+test_that("data,SummarizedExperiment works", {
+    res <- data(se, assayNames = assayNames(se))
     expect_true(ncol(res) == 21)
     expect_true(nrow(res) == 6)
 
-    res <- chris_data(se, assayNames = "conc")
+    res <- data(se, assayNames = "conc")
     expect_true(ncol(res) == 11)
     expect_true(nrow(res) == 6)
 })
 
-test_that("chris_labels,SummarizedExperiment works", {
-    res <- chris_labels(se, assayNames = "conc")
+test_that("labels,SummarizedExperiment works", {
+    res <- labels(se, assayNames = "conc")
     expect_true(nrow(res) == 10)
     expect_true(all(res$type == "float"))
     expect_equal(res$add_col, 1:10)
 })
 
-test_that("chris_groups,SummarizedExperiment works", {
-    res <- chris_groups(se, assayNames = "conc")
+test_that("groups,SummarizedExperiment works", {
+    res <- groups(se, assayNames = "conc")
     expect_true(nrow(res) == 20)
     expect_true(all(res$group[1:10] == "assay_conc"))
 
-    res <- chris_groups(se, assayNames = c("conc", "twice"))
+    res <- groups(se, assayNames = c("conc", "twice"))
     expect_true(nrow(res) == 40)
     expect_true(all(res$group[1:20] %in% c("assay_conc", "assay_twice")))
 })

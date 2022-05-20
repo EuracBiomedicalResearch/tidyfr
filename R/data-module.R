@@ -1,4 +1,4 @@
-#' @title CHRIS Data Modules
+#' @title Data Modules
 #'
 #' @name DataModule
 #'
@@ -6,12 +6,12 @@
 #'
 #' @description
 #'
-#' A CHRIS Data Module provides the data of one specific module, which can be
+#' A Data Module provides the data of one specific module, which can be
 #' the interview, clinical blood parameters or the metabolomics or proteomics
-#' data sets. The actual data from a module is stored in the CHRIS Textual File
-#' Format (CTFF - see [CTFF] for more details).
+#' data sets. The actual data from a module is stored in the Textual Dataset
+#' Format (TDF - see [TDF] for more details).
 #'
-#' The `chrisr` package represents a data module with the `DataModule` object
+#' The `tidyfr` package represents a data module with the `DataModule` object
 #' which provides all necessary functionality to import data of a module and to
 #' format it properly for R.
 #'

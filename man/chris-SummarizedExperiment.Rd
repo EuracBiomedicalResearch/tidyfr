@@ -2,16 +2,13 @@
 % Please edit documentation in R/summarized_experiment.R
 \name{chris-SummarizedExperiment}
 \alias{chris-SummarizedExperiment}
-\alias{chris_data,SummarizedExperiment-method}
-\alias{chris_labels,SummarizedExperiment-method}
-\alias{chris_groups,SummarizedExperiment-method}
-\title{Extracting CTFF-compliant data from a SummarizedExperiment}
+\alias{labels,SummarizedExperiment-method}
+\alias{groups,SummarizedExperiment-method}
+\title{Extracting TDF-compliant data from a SummarizedExperiment}
 \usage{
-\S4method{chris_data}{SummarizedExperiment}(object, assayNames. = assayNames(object), labelPrefix = "x0xx")
+\S4method{groups}{SummarizedExperiment}(object, assayNames. = assayNames(object), labelPrefix = "x0xx")
 
-\S4method{chris_groups}{SummarizedExperiment}(object, assayNames. = assayNames(object), labelPrefix = "x0xx")
-
-\S4method{chris_labels}{SummarizedExperiment}(object, assayNames. = assayNames(object), labelPrefix = "x0xx")
+\S4method{labels}{SummarizedExperiment}(object, assayNames. = assayNames(object), labelPrefix = "x0xx")
 }
 \arguments{
 \item{object}{A \code{SummarizedExperiment} object.}
@@ -27,10 +24,10 @@ a \code{data.frame} with the data.
 }
 \description{
 The \code{\link[=SummarizedExperiment]{SummarizedExperiment()}} class is a container for data from large scale
-assays for biological experiments. In contrast to CHRIS data, samples are
+assays for biological experiments. In contrast to TDF data, samples are
 organized in columns of a \code{SummarizedExperiment} and measurements in rows.
 The \code{data}, \code{labels} and \code{groups} methods allow to extract information from
-such objects in a CHRIS Textual File Format (CTFF)-compliant format
+such objects in a Textual Dataset File (TDF)-compliant format
 (structure):
 \itemize{
 \item columns are variables, rows individuals (samples).
@@ -39,7 +36,7 @@ such objects in a CHRIS Textual File Format (CTFF)-compliant format
 
 The available methods are:
 \itemize{
-\item \code{chris_data}: export the (quantitative) assay data from an
+\item \code{data}: export the (quantitative) assay data from an
 \code{SummarizedExperiment} as a \code{data.frame} with columns representing
 variables and rows samples (study participants). Parameter \code{assayNames.}
 allows to specify which of the assays from the \code{SummarizedExperiment}
@@ -53,13 +50,13 @@ corresponds to the first row in the first assay, while \code{"x0xx001a"}
 represents the first row in the second assay. The \code{colnames} of the
 \code{SummarizedExperiment} are used as sample identifiers and are returned in
 column \code{"aid"} of the result \code{data.frame}.
-\item \code{chris_groups}: retrieves a \code{data.frame} that specifies the grouping of
+\item \code{groups}: retrieves a \code{data.frame} that specifies the grouping of
 variables returned by \code{data} from a \code{SummarizedExperiment}. Columns
 (variables) containing data from the same \code{assay} of the
 \code{SummarizedExperiment} are grouped into the same group.
-\item \code{chris_labels}: extracts label annotations for the data extracted with
+\item \code{labels}: extracts label annotations for the data extracted with
 \code{data} from a \code{SummarizedExperiment}. The returned \code{data.frame} is in the
-\emph{labels} format of the CTFF but contains additional columns with the
+\emph{labels} format of the TDF but contains additional columns with the
 available annotations from the \code{SummarizedExperiment}'s \code{\link[=rowData]{rowData()}}. The
 \code{rownames} of the \code{SummarizedExperiment} are returned in columns
 \code{"description"}.
@@ -89,13 +86,13 @@ se
 assayNames(se)
 
 ## Get a data.frame with all variables
-chris_data(se)
+data(se)
 
 ## Get the label information
-chris_labels(se)
+labels(se)
 
 ## Get the variable grouping
-chris_groups(se)
+groups(se)
 }
 \author{
 Johannes Rainer

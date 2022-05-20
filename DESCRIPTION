@@ -1,8 +1,8 @@
-Package: chrisr
-Title: R Interface for CHRIS Data
+Package: tidyfr
+Title: R Interface for the Textual Dataset Format
 Version: 0.99.4
-Description: The chrisr package provides an R interface to retrieve CHRIS data
-    sets in a structured way. The package takes care to correctly format the
+Description: The tidyfr package provides import and export functionality for the
+    Textual Dataset Format (TFD). The package takes care to correctly format the
     various data types, implements solutions for handling of different encodings
     of missing data and returns also the data set version and annotation.
 Authors@R: c(person(given = "Johannes", family = "Rainer",
@@ -19,7 +19,7 @@ Suggests:
     roxygen2
 License: Artistic-2.0
 LazyData: false
-BugReports: https://github.com/EuracBiomedicalResearch/chrisr/issues
-URL: https://github.com/EuracBiomedicalResearch/chrisr
+BugReports: https://github.com/EuracBiomedicalResearch/tidyfr/issues
+URL: https://github.com/EuracBiomedicalResearch/tidyfr
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 7.1.2

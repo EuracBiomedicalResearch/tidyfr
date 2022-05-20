@@ -1,4 +1,5 @@
-#' Functions and methods to import/export data from/to SummarizedExperiment objects.
+#' Functions and methods to import/export data from/to SummarizedExperiment
+#' objects.
 #'
 #' @noRd
 NULL
@@ -72,19 +73,19 @@ NULL
     cbind(l, rd_full)
 }
 
-#' @title Extracting CTFF-compliant data from a SummarizedExperiment
+#' @title Extracting TDF-compliant data from a SummarizedExperiment
 #'
 #' @name chris-SummarizedExperiment
 #'
-#' @aliases chris_data,SummarizedExperiment-method chris_labels,SummarizedExperiment-method chris_groups,SummarizedExperiment-method
+#' @aliases labels,SummarizedExperiment-method groups,SummarizedExperiment-method
 #'
 #' @description
 #'
 #' The [SummarizedExperiment()] class is a container for data from large scale
-#' assays for biological experiments. In contrast to CHRIS data, samples are
+#' assays for biological experiments. In contrast to TDF data, samples are
 #' organized in columns of a `SummarizedExperiment` and measurements in rows.
 #' The `data`, `labels` and `groups` methods allow to extract information from
-#' such objects in a CHRIS Textual File Format (CTFF)-compliant format
+#' such objects in a Textual Dataset File (TDF)-compliant format
 #' (structure):
 #'
 #' - columns are variables, rows individuals (samples).
@@ -92,7 +93,7 @@ NULL
 #'
 #' The available methods are:
 #'
-#' - `chris_data`: export the (quantitative) assay data from an
+#' - `data`: export the (quantitative) assay data from an
 #'   `SummarizedExperiment` as a `data.frame` with columns representing
 #'   variables and rows samples (study participants). Parameter `assayNames.`
 #'   allows to specify which of the assays from the `SummarizedExperiment`
@@ -107,14 +108,14 @@ NULL
 #'   `SummarizedExperiment` are used as sample identifiers and are returned in
 #'   column `"aid"` of the result `data.frame`.
 #'
-#' - `chris_groups`: retrieves a `data.frame` that specifies the grouping of
+#' - `groups`: retrieves a `data.frame` that specifies the grouping of
 #'   variables returned by `data` from a `SummarizedExperiment`. Columns
 #'   (variables) containing data from the same `assay` of the
 #'   `SummarizedExperiment` are grouped into the same group.
 #'
-#' - `chris_labels`: extracts label annotations for the data extracted with
+#' - `labels`: extracts label annotations for the data extracted with
 #'   `data` from a `SummarizedExperiment`. The returned `data.frame` is in the
-#'   *labels* format of the CTFF but contains additional columns with the
+#'   *labels* format of the TDF but contains additional columns with the
 #'   available annotations from the `SummarizedExperiment`'s [rowData()]. The
 #'   `rownames` of the `SummarizedExperiment` are returned in columns
 #'   `"description"`.
@@ -159,29 +160,19 @@ NULL
 #' assayNames(se)
 #'
 #' ## Get a data.frame with all variables
-#' chris_data(se)
+#' data(se)
 #'
 #' ## Get the label information
-#' chris_labels(se)
+#' labels(se)
 #'
 #' ## Get the variable grouping
-#' chris_groups(se)
+#' groups(se)
 NULL
 
 #' @rdname chris-SummarizedExperiment
 #'
 #' @export
-setMethod("chris_data", "SummarizedExperiment",
-          function(object, assayNames. = assayNames(object),
-                   labelPrefix = "x0xx") {
-              .data_from_SummarizedExperiment(object, assayNames. = assayNames.,
-                                              label_prefix = labelPrefix)
-          })
-
-#' @rdname chris-SummarizedExperiment
-#'
-#' @export
-setMethod("chris_groups", "SummarizedExperiment",
+setMethod("groups", "SummarizedExperiment",
           function(object, assayNames. = assayNames(object),
                    labelPrefix = "x0xx") {
               .groups_from_SummarizedExperiment(
@@ -191,7 +182,7 @@ setMethod("chris_groups", "SummarizedExperiment",
 #' @rdname chris-SummarizedExperiment
 #'
 #' @export
-setMethod("chris_labels", "SummarizedExperiment",
+setMethod("labels", "SummarizedExperiment",
           function(object, assayNames. = assayNames(object),
                    labelPrefix = "x0xx") {
               .labels_from_SummarizedExperiment(

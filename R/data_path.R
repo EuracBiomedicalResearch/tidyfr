@@ -1,16 +1,6 @@
-#' Functionality to deal with CHRIS releases, base CHRIS data path etc.
+#' @title Data path
 #'
-#' CHRIS data is organized in the following way:
-#'
-#' CHRIS base path/module/version/data
-#'                                  doc
-#'
-#' @noRd
-NULL
-
-#' @title CHRIS data path
-#'
-#' @name chris_data_path
+#' @name data_path
 #'
 #' @description
 #'
@@ -20,7 +10,7 @@ NULL
 #'
 #' The available functions are:
 #'
-#' - `chris_data_path`: returns a `character(1)` with the currently defined full
+#' - `data_path`: returns a `character(1)` with the currently defined full
 #'   path to the CHRIS data.
 #'
 #' - `list_data_modules`: lists available data modules in the specified path.
@@ -36,22 +26,22 @@ NULL
 #'
 NULL
 
-#' @rdname chris_data_path
+#' @rdname data_path
 #'
 #' @export
-chris_data_path <- function() {
-    path <- Sys.getenv("CHRIS_DATA_PATH")
+data_path <- function() {
+    path <- Sys.getenv("DATA_PATH")
     if (path == "") {
-        warning("CHRIS data path not set. The path can be globally set with ",
-                "the environment variable 'CHRIS_DATA_PATH'")
+        warning("Data path not set. The path can be globally set with ",
+                "the environment variable 'DATA_PATH'")
     }
     path
 }
 
-#' @rdname chris_data_path
+#' @rdname data_path
 #'
 #' @export
-list_data_modules <- function(path = chris_data_path()) {
+list_data_modules <- function(path = data_path()) {
     if (!dir.exists(path))
         stop("Directory \"", path, "\" does not exist")
     mods <- list.dirs(path, full.names = TRUE, recursive = FALSE)
@@ -70,6 +60,6 @@ list_data_modules <- function(path = chris_data_path()) {
         }, module = basename(z)))
     }))
     if (!length(res))
-        warning("No CHRIS data modules found in \"", path, "\n")
+        warning("No data modules found in \"", path, "\n")
     res
 }

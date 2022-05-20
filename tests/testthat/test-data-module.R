@@ -1,6 +1,6 @@
-ex1 <- system.file("txt", "db_example1", "1.0.0", "data", package = "chrisr")
-ex2 <- system.file("txt", "db_example2", "1.0.0", "data", package = "chrisr")
-ex3 <- system.file("txt", "db_example2", "1.0.1", "data", package = "chrisr")
+ex1 <- system.file("txt", "db_example1", "1.0.0", "data", package = "tidyfr")
+ex2 <- system.file("txt", "db_example2", "1.0.0", "data", package = "tidyfr")
+ex3 <- system.file("txt", "db_example2", "1.0.1", "data", package = "tidyfr")
 
 test_that(".valid_data_directory works", {
     expect_match(.valid_data_directory(tempdir()), "missing")
