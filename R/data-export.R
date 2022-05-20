@@ -2,6 +2,8 @@
 #'
 #' @aliases labels_from_data mapping_from_data
 #'
+#' @description
+#'
 #' The `export_tdf` exports the provided data in the TDF format. The function
 #' first creates all required folders, checks the input
 #' files and then exports the data in the TDF format (see below for more
@@ -30,7 +32,7 @@
 #' @section Short information on the TDF:
 #'
 #' See the official
-#' [TDF](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format)
+#' [Textual Dataset Format](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format)
 #' definition for a complete description of the format.
 #'
 #' - **data**: contains the data of the various variables. Columns are
@@ -100,7 +102,7 @@
 #'
 #' @author Johannes Rainer
 #'
-#' @export
+#' @export export_tdf
 #'
 #' @examples
 #'

@@ -4,105 +4,6 @@
 \alias{export_tdf}
 \alias{labels_from_data}
 \alias{mapping_from_data}
-\alias{The}
-\alias{`export_tdf`}
-\alias{exports}
-\alias{the}
-\alias{provided}
-\alias{data}
-\alias{in}
-\alias{TDF}
-\alias{format.}
-\alias{function}
-\alias{first}
-\alias{creates}
-\alias{all}
-\alias{required}
-\alias{folders,}
-\alias{checks}
-\alias{input}
-\alias{files}
-\alias{and}
-\alias{then}
-\alias{format}
-\alias{(see}
-\alias{below}
-\alias{for}
-\alias{more}
-\alias{information}
-\alias{on}
-\alias{this}
-\alias{format).}
-\alias{Automatic}
-\alias{convertions}
-\alias{performed}
-\alias{by}
-\alias{are:}
-\alias{-}
-\alias{Columns}
-\alias{`data`}
-\alias{that}
-\alias{are}
-\alias{of}
-\alias{type}
-\alias{`factor`}
-\alias{correctly}
-\alias{automatically}
-\alias{converted}
-\alias{to}
-\alias{expected}
-\alias{(i.e.}
-\alias{their}
-\alias{categories}
-\alias{added}
-\alias{`mapping`}
-\alias{`data.frame`}
-\alias{values}
-\alias{replaced}
-\alias{with}
-\alias{indices).}
-\alias{If}
-\alias{not}
-\alias{specified}
-\alias{`labels`,}
-\alias{columns}
-\alias{`"min"`,}
-\alias{`"max"`}
-\alias{`labels`}
-\alias{calculated}
-\alias{`data`.}
-\alias{Missing}
-\alias{respective}
-\alias{encoding}
-\alias{`labels`.}
-\alias{`labels_from_data`}
-\alias{a}
-\alias{*template*}
-\alias{*labels*}
-\alias{from}
-\alias{retrieves}
-\alias{various}
-\alias{like}
-\alias{adds}
-\alias{corresponding}
-\alias{`data.frame`.}
-\alias{Other}
-\alias{columns,}
-\alias{such}
-\alias{as}
-\alias{`"description"`}
-\alias{or}
-\alias{`"unit"`}
-\alias{need}
-\alias{be}
-\alias{filled}
-\alias{out}
-\alias{manually.}
-\alias{`mapping_from_data`}
-\alias{*mapping*}
-\alias{categorical}
-\alias{variables}
-\alias{`factor`).}
 \title{Export data in the Textual Dataset Format}
 \usage{
 export_tdf(
@@ -167,13 +68,37 @@ the folder where the data was stored. \code{labels_from_data} returns a
 \emph{labels} \code{data.frame} based on the data in \code{data}.
 }
 \description{
-Export data in the Textual Dataset Format
+The \code{export_tdf} exports the provided data in the TDF format. The function
+first creates all required folders, checks the input
+files and then exports the data in the TDF format (see below for more
+information on this format).
+
+Automatic convertions performed by the function are:
+\itemize{
+\item Columns in \code{data} that are of data type \code{factor} are correctly and
+automatically converted to the expected format (i.e. their categories are
+added to the \code{mapping} \code{data.frame} and the values are replaced with the
+indices).
+\item If not specified in \code{labels}, columns \code{"min"}, \code{"max"} in \code{labels} are
+calculated on the provided \code{data}.
+\item Missing values in \code{data} are automatically converted and the respective
+encoding specified in \code{labels}.
+}
+
+The \code{labels_from_data} creates a \emph{template} \emph{labels} \code{data.frame} from the
+provided \code{data}. The function retrieves various information like the data
+type of the various columns from the provided \code{data} and adds the
+corresponding values to the \code{data.frame}. Other columns, such as
+\code{"description"} or \code{"unit"} need to be filled out manually.
+
+The \code{mapping_from_data} creates a \emph{mapping} \code{data.frame} for all categorical
+variables in \code{data} (i.e. columns in \code{data} with data type \code{factor}).
 }
 \section{Short information on the TDF}{
 
 
 See the official
-\href{https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format}{TDF}
+\href{https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format}{Textual Dataset Format}
 definition for a complete description of the format.
 \itemize{
 \item \strong{data}: contains the data of the various variables. Columns are
