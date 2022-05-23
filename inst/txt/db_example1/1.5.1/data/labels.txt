@@ -1,0 +1,18 @@
+label	unit	type	min	max	missing	description
+x0_age	year	float	0	100	-89	Age at examination (years)
+x0_ager	year	integer	0	100	-89	Age at examination (years)
+x0_sex		categorical			-89	Sex
+x0_birthpc		categorical			-89	Birthplace (offical) - coded
+x0_residpc		categorical			-89	Place of recidence (official)
+x0_examd	date	date			0000-00-00	Date of examination
+x0_workf		character			missing	Workflow
+x0_birthd		date			0000-00-00	Date of birth
+x0_note		character			missing	Participation notes
+x0_notesaliva		character			missing	Notes saliva collection
+x0_noteint		character			missing	Notes interview
+x0_noteself		character			missing	Notes self-admin
+x0_notespiro		character			missing	Notes spiralography
+x0_birthm	month	integer	1	12	-89	Month of birth
+x0_birthy	year	integer	1900	2021	-89	Year of birth
+x0_examm	month	integer	1	12	-89	Month of examination
+x0_examy	year	integer	2000	2021	-89	Year of examination

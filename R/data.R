@@ -14,8 +14,8 @@
     data
 }
 
-#' - categorical variables.
-#' - date/time variables.
+#' Function to import and format the data of a module.
+#'
 #' @param path `character(1)` with the module path
 #'
 #' @noRd
@@ -23,14 +23,13 @@
     d <- .data(path)
     l <- .labels(path)
     m <- .mapping(path)
-    ## loop over data columns, get an importer function from labels.
     cn <- colnames(d)
     for (label in colnames(d)) {
         if (label == "aid") next
         na <- l[l$label == label, "missing"]
         fun <- .FORMAT_IMPORT[[l[l$label == label, "type"]]]
         if (!is.null(fun))
-            d[, label] <- fun(d[, label], na = na, label = label, mapping = m)
+            d[[label]] <- fun(d[, label], na = na, label = label, mapping = m)
         else warning("No formatter for ", l[l$label == label, "type"])
     }
     d
@@ -57,22 +56,38 @@
     as.character(x)
 }
 
+.format_date_import <- function(x, na, format = "%Y-%m-%d", ...) {
+    x[x == na] <- NA
+    strptime(x, format = format)
+}
+
+.format_time_import <- function(x, na, format = "%H:%M:%S", ...) {
+    x[x == na] <- NA
+    strptime(x, format = format)
+}
+
+.format_datetime_import <- function(x, na, format = "%Y-%m-%dT%H:%M:%S",...) {
+    x[x == na] <- NA
+    strptime(x, format = format)
+}
+
+.format_boolean_import <- function(x, na, ...) {
+    x[x == na] <- NA
+    as.logical(x)
+}
+
 .FORMAT_IMPORT <- list(
     integer = .format_integer_import,
     float = .format_float_import,
     categorical= .format_categorical_import,
-    character = .format_character_import)
+    character = .format_character_import,
+    date = .format_date_import,
+    time = .format_time_import,
+    datetime = .format_datetime_import,
+    boolean = .format_boolean_import)
 
 .format_categorical_export <- function(x) {
     as.integer(x)
-}
-
-## .format_categorical_import <- function(x, levels) {
-##     factor(levels[x], levels = levels)
-## }
-
-.format_date_import <- function(x) {
-    stop("Date support not yet implemented")
 }
 
 .format_date_export <- function(x) {
