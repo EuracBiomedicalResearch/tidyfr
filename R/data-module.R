@@ -28,6 +28,18 @@
 #'
 #' @section Accessing properties and data from a module:
 #'
+#' - `data`: returns the data of a module as a `data.frame`. Column `"aid"`
+#'   contains the identifiers of individuals (participants). Columns (variables)
+#'   in the returned `data.frame` are correctly formatted (i.e. as `factors`,
+#'   `integers`, `numeric`, `character` or date/time formats) according to the
+#'   *labels* information of the data module. Use the `labels` function to
+#'   retrieve variable information (annotation) from the data module.
+#' - `groups`: returns a `data.frame` with the optional grouping of variables.
+#'   The group descriptions are provided byt the `grp_labels` function.
+#' - `grp_labels`: returns a `data.frame` with a description for each defined
+#'   variable group.
+#' - `labels`: returns a `data.frame` with the description and annotation of the
+#'   individual variables (labels).
 #' - `moduleName`: returns the name of a module.
 #' - `modulePath`: returns the (full) file path to the data module.
 #' - `moduleVersion`: returns the version of the data module.
@@ -65,6 +77,29 @@
 #' moduleName(mdl)
 #' moduleDescription(mdl)
 #' moduleVersion(mdl)
+#'
+#' ## Get the data from the module
+#' d <- data(mdl)
+#' d
+#'
+#' ## Variables are correctly formatted:
+#' ## categorical variables (factors):
+#' d$x0_sex
+#'
+#' ## Dates:
+#' d$x0_examd
+#'
+#' ## Numeric:
+#' d$x0_age
+#'
+#' ## Get information on all variables
+#' labels(mdl)
+#'
+#' ## Get information of variable grouping
+#' groups(mdl)
+#'
+#' ## Get the corresponding group description
+#' grp_labels(mdl)
 NULL
 
 setClass("DataModule",
@@ -126,6 +161,25 @@ setMethod("show", "DataModule", function(object) {
 #' @rdname DataModule
 #'
 #' @export
+grp_labels <- function(object) .grp_labels(modulePath(object))
+
+#' @rdname DataModule
+#'
+#' @export
+setMethod("labels", "DataModule", function(object) {
+    .labels(modulePath(object))
+})
+
+#' @rdname DataModule
+#'
+#' @export
+setMethod("groups", "DataModule", function(object) {
+    .groups(modulePath(object))
+})
+
+#' @rdname DataModule
+#'
+#' @export
 moduleName <- function(object) object@name
 
 #' @rdname DataModule
@@ -148,6 +202,11 @@ moduleDescription <- function(object) object@description
 #' @export
 moduleDate <- function(object) object@date
 
+#' The *main* validator for a module. Checks that all files are available,
+#' that all files have expected content and that information across files is
+#' coherent
+#'
+#' @noRd
 .valid_data_directory <- function(path, stop = FALSE) {
     fls <- dir(path)
     msgs <- character()
@@ -207,7 +266,9 @@ moduleDate <- function(object) object@date
 }
 
 .grp_labels <- function(x) {
-    .read_dataset_file(x, "grp_labels")
+    gl <- .read_dataset_file(x, "grp_labels")
+    rownames(gl) <- gl$group
+    gl
 }
 
 .info <- function(x) {
@@ -215,7 +276,9 @@ moduleDate <- function(object) object@date
 }
 
 .labels <- function(x) {
-    .read_dataset_file(x, "labels")
+    l <- .read_dataset_file(x, "labels")
+    rownames(l) <- l$label
+    l
 }
 
 .mapping <- function(x) {

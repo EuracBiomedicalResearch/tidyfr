@@ -19,13 +19,16 @@
 #' @param path `character(1)` with the module path
 #'
 #' @noRd
-.data_import <- function(path) {
+.data_import <- function(path, ...) {
     d <- .data(path)
     l <- .labels(path)
     m <- .mapping(path)
     cn <- colnames(d)
     for (label in colnames(d)) {
-        if (label == "aid") next
+        if (label == "aid") {
+            d[["aid"]] <- .format_aid(d[["aid"]], 10)
+            next
+        }
         na <- l[l$label == label, "missing"]
         fun <- .FORMAT_IMPORT[[l[l$label == label, "type"]]]
         if (!is.null(fun))
@@ -33,6 +36,10 @@
         else warning("No formatter for ", l[l$label == label, "type"])
     }
     d
+}
+
+.format_aid <- function(x, length = 10) {
+    sprintf(paste0("%0", 10, "d"), x)
 }
 
 .format_float_import <- function(x, na, ...) {

@@ -111,6 +111,7 @@ test_that(".data_import works", {
     expect_equal(levels(res$x0_sex), c("Male", "Female"))
     expect_true(is.numeric(res$x0_age))
     expect_true(is.integer(res$x0_ager))
+    expect_equal(grep("^001", res$aid), seq_len(nrow(res)))
 
     p2 <- system.file("txt", "db_example2", "1.0.0", "data", package = "tidyfr")
     res <- .data_import(p2)

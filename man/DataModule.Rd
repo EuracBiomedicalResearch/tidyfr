@@ -5,6 +5,9 @@
 \alias{DataModule-class}
 \alias{show,DataModule-method}
 \alias{data_module}
+\alias{grp_labels}
+\alias{labels,DataModule-method}
+\alias{groups,DataModule-method}
 \alias{moduleName}
 \alias{modulePath}
 \alias{moduleVersion}
@@ -13,6 +16,12 @@
 \title{Data Modules}
 \usage{
 data_module(name = character(), version = character(), path = data_path())
+
+grp_labels(object)
+
+\S4method{labels}{DataModule}(object)
+
+\S4method{groups}{DataModule}(object)
 
 moduleName(object)
 
@@ -66,6 +75,18 @@ where the data module can be found. The function returns an instance of
 \section{Accessing properties and data from a module}{
 
 \itemize{
+\item \code{data}: returns the data of a module as a \code{data.frame}. Column \code{"aid"}
+contains the identifiers of individuals (participants). Columns (variables)
+in the returned \code{data.frame} are correctly formatted (i.e. as \code{factors},
+\code{integers}, \code{numeric}, \code{character} or date/time formats) according to the
+\emph{labels} information of the data module. Use the \code{labels} function to
+retrieve variable information (annotation) from the data module.
+\item \code{groups}: returns a \code{data.frame} with the optional grouping of variables.
+The group descriptions are provided byt the \code{grp_labels} function.
+\item \code{grp_labels}: returns a \code{data.frame} with a description for each defined
+variable group.
+\item \code{labels}: returns a \code{data.frame} with the description and annotation of the
+individual variables (labels).
 \item \code{moduleName}: returns the name of a module.
 \item \code{modulePath}: returns the (full) file path to the data module.
 \item \code{moduleVersion}: returns the version of the data module.
@@ -88,6 +109,29 @@ mdl
 moduleName(mdl)
 moduleDescription(mdl)
 moduleVersion(mdl)
+
+## Get the data from the module
+d <- data(mdl)
+d
+
+## Variables are correctly formatted:
+## categorical variables (factors):
+d$x0_sex
+
+## Dates:
+d$x0_examd
+
+## Numeric:
+d$x0_age
+
+## Get information on all variables
+labels(mdl)
+
+## Get information of variable grouping
+groups(mdl)
+
+## Get the corresponding group description
+grp_labels(mdl)
 }
 \author{
 Johannes Rainer

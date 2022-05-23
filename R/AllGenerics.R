@@ -66,6 +66,6 @@ data <- function(...) {
         return(do.call(.data_from_SummarizedExperiment, vars, quote = TRUE))
     }
     if (length(vars) && is(vars[[1L]], "DataModule"))
-        cat("calling for DataModule")
+        return(.data_import(modulePath(vars[[1L]]), ...))
     utils::data(...)
 }

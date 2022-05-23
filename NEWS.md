@@ -3,6 +3,7 @@
 ## Changes in 0.99.4
 
 - Add `DataModule` and code to represent CHRIS Data modules.
+- Add methods to import data from data modules.
 
 ## Changes in 0.99.3
 

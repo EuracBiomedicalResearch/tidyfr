@@ -1,6 +1,7 @@
 ex1 <- system.file("txt", "db_example1", "1.0.0", "data", package = "tidyfr")
 ex2 <- system.file("txt", "db_example2", "1.0.0", "data", package = "tidyfr")
 ex3 <- system.file("txt", "db_example2", "1.0.1", "data", package = "tidyfr")
+ex4 <- system.file("txt", "db_example1", "1.5.1", "data", package = "tidyfr")
 
 test_that(".valid_data_directory works", {
     expect_match(.valid_data_directory(tempdir()), "missing")
@@ -8,6 +9,7 @@ test_that(".valid_data_directory works", {
 
     expect_true(.valid_data_directory(ex1))
     expect_true(.valid_data_directory(ex3))
+    expect_error(tidyfr:::.valid_data_directory(ex4, stop = TRUE), "missing")
 })
 
 test_that("DataModule validator works", {
@@ -214,4 +216,50 @@ test_that("data_module works", {
     expect_equal(moduleVersion(res), "1.0.0")
     expect_match(moduleDescription(res), "General")
     expect_equal(moduleDate(res), "2021-07-01")
+})
+
+test_that("data,DataModule works", {
+    pth <- system.file("txt", package = "tidyfr")
+    dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
+
+    res <- data(dm)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("aid", "x0_sex", "x0_age", "x0_ager"))
+    expect_equal(res$x0_ager, c(35L, NA_integer_, 52L, 56L, 62L, 54L, 53L))
+    expect_true(is.factor(res$x0_sex))
+
+    dm <- data_module(name = "db_example2", version = "1.0.1", path = pth)
+    res <- data(dm)
+    expect_true(nrow(res) == 2)
+    expect_true(is.factor(res$x0_sex))
+    expect_equal(res$x0_note, c("something", NA))
+})
+
+test_that("groups,DataModule works", {
+    pth <- system.file("txt", package = "tidyfr")
+    dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
+
+    res <- groups(dm)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("group", "label"))
+})
+
+test_that("grp_labels,DataModule works", {
+    pth <- system.file("txt", package = "tidyfr")
+    dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
+
+    res <- grp_labels(dm)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("group", "description"))
+    expect_equal(res$group, c("person", "age"))
+    expect_equal(res$group, rownames(res))
+})
+
+test_that("labels,DataModule works", {
+    pth <- system.file("txt", package = "tidyfr")
+    dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
+
+    res <- labels(dm)
+    expect_true(is.data.frame(res))
+    expect_equal(rownames(res), res$label)
 })
