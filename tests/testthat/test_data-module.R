@@ -113,6 +113,25 @@ test_that(".labels, .valid_labels works", {
     l[3, "type"] <- "unknown"
     expect_error(.valid_labels(l), "unsupported")
     expect_true(length(.valid_labels(l, stop = FALSE)) > 0)
+
+    ## labels_additional_information.txt
+    l <- data.frame(label = c("a", "b", "c"),
+                    unit = "year",
+                    type = "integer")
+    l_a <- data.frame(label = c("a", "b", "c"),
+                      other = c("A", "B", "C"))
+    td <- tempdir()
+    write.table(l, file.path(td, "labels.txt"), sep = "\t", row.names = FALSE,
+                quote = FALSE)
+    write.table(l_a[1:2, ], file.path(td, "labels_additional_information.txt"),
+                sep = "\t", row.names = FALSE, quote = FALSE)
+    expect_warning(res <- .labels(td), "wrong format")
+    rownames(res) <- NULL
+    expect_equal(res, l)
+    write.table(l_a, file.path(td, "labels_additional_information.txt"),
+                sep = "\t", row.names = FALSE, quote = FALSE)
+    res <- .labels(td)
+    expect_equal(res$other, c("A", "B", "C"))
 })
 
 test_that(".mapping, .valid_mapping works", {

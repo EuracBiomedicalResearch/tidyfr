@@ -1,5 +1,11 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.5
+
+- Store additional label information in a file labels_additional_information.txt
+  (was labels_add.txt).
+- .labels imports also labels_additional_information.txt file.
+
 ## Changes in 0.99.4
 
 - Add `DataModule` and code to represent CHRIS Data modules.

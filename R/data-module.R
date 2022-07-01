@@ -278,6 +278,15 @@ moduleDate <- function(object) object@date
 .labels <- function(x) {
     l <- .read_dataset_file(x, "labels")
     rownames(l) <- l$label
+    if (file.exists(file.path(x, "labels_additional_information.txt"))) {
+        l_a <- .read_dataset_file(x, "labels_additional_information")
+        rownames(l_a) <- l_a$label
+        l_a <- l_a[, !colnames(l_a) == "label", drop = FALSE]
+        if (!all(rownames(l) %in% rownames(l_a)))
+            warning("Ignoring file \"labels_additional_information.txt\" ",
+                    "because it is in a wrong format.")
+        else l <- cbind(l, l_a[rownames(l), , drop = FALSE])
+    }
     l
 }
 

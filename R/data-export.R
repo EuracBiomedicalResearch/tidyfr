@@ -333,7 +333,8 @@ mapping_from_data <- function(data) {
                 row.names = FALSE, file = file.path(path, "labels.txt"))
     if (length(cn_add) > 1L)
         write.table(labels[, cn_add], sep = "\t", quote = FALSE, na = "",
-                    row.names = FALSE, file = file.path(path, "labels_add.txt"))
+                    row.names = FALSE,
+                    file = file.path(path, "labels_additional_information.txt"))
 }
 
 .export_groups <- function(path = ".", groups = .empty_groups()) {
