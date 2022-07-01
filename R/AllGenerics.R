@@ -58,14 +58,16 @@ setGeneric("groups", function(object, ...)
 #' @name TDF
 NULL
 
-#' @importFrom methods is
+#' @importFrom methods is validObject
 data <- function(...) {
     vars <- list(...)
     if (length(vars) && inherits(vars[[1L]], "SummarizedExperiment")) {
         names(vars)[1L] <- "x"
         return(do.call(.data_from_SummarizedExperiment, vars, quote = TRUE))
     }
-    if (length(vars) && is(vars[[1L]], "DataModule"))
+    if (length(vars) && is(vars[[1L]], "DataModule")) {
+        validObject(vars[[1L]])
         return(.data_import(modulePath(vars[[1L]]), ...))
+    }
     utils::data(...)
 }

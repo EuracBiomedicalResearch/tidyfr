@@ -238,6 +238,10 @@ test_that("data_module works", {
 })
 
 test_that("data,DataModule works", {
+    tmp <- new("DataModule")
+    tmp@path <- "does not exist"
+    expect_error(data(tmp), "does not exist")
+
     pth <- system.file("txt", package = "tidyfr")
     dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
 
@@ -255,6 +259,10 @@ test_that("data,DataModule works", {
 })
 
 test_that("groups,DataModule works", {
+    tmp <- new("DataModule")
+    tmp@path <- "does not exist"
+    expect_error(groups(tmp), "does not exist")
+
     pth <- system.file("txt", package = "tidyfr")
     dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
 
@@ -264,6 +272,10 @@ test_that("groups,DataModule works", {
 })
 
 test_that("grp_labels,DataModule works", {
+    tmp <- new("DataModule")
+    tmp@path <- "does not exist"
+    expect_error(grp_labels(tmp), "does not exist")
+
     pth <- system.file("txt", package = "tidyfr")
     dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
 
@@ -275,6 +287,10 @@ test_that("grp_labels,DataModule works", {
 })
 
 test_that("labels,DataModule works", {
+    tmp <- new("DataModule")
+    tmp@path <- "does not exist"
+    expect_error(labels(tmp), "does not exist")
+
     pth <- system.file("txt", package = "tidyfr")
     dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
 

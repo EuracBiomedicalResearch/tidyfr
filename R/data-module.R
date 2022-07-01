@@ -161,12 +161,16 @@ setMethod("show", "DataModule", function(object) {
 #' @rdname DataModule
 #'
 #' @export
-grp_labels <- function(object) .grp_labels(modulePath(object))
+grp_labels <- function(object) {
+    validObject(object)
+    .grp_labels(modulePath(object))
+}
 
 #' @rdname DataModule
 #'
 #' @export
 setMethod("labels", "DataModule", function(object) {
+    validObject(object)
     .labels(modulePath(object))
 })
 
@@ -174,6 +178,7 @@ setMethod("labels", "DataModule", function(object) {
 #'
 #' @export
 setMethod("groups", "DataModule", function(object) {
+    validObject(object)
     .groups(modulePath(object))
 })
 
