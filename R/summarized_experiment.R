@@ -10,7 +10,7 @@ NULL
 #'
 #' @param assayNames. `character` with the names of the assays to export.
 #'
-#' @param label_prefix `character` with the *prefix* to be used to create the
+#' @param labelPrefix `character` with the *prefix* to be used to create the
 #'     labels. The final label will be the prefix and a number.
 #'
 #' @return `data.frame` with the data from the assays of `x` as columns.
@@ -19,8 +19,8 @@ NULL
 #'
 #' @noRd
 .data_from_SummarizedExperiment <- function(x, assayNames. = assayNames(x),
-                                            label_prefix = "x0xx") {
-    label <- paste0(label_prefix, .integer_string(seq_len(nrow(x))))
+                                            labelPrefix = "x0xx") {
+    label <- paste0(labelPrefix, .integer_string(seq_len(nrow(x))))
     if (is.null(aid <- colnames(x)))
         aid <- seq_len(ncol(x))
     res <- data.frame(aid = aid)
@@ -35,9 +35,9 @@ NULL
 }
 
 .groups_from_SummarizedExperiment <- function(x, assayNames. = assayNames(x),
-                                              label_prefix = "x0xx") {
+                                              labelPrefix = "x0xx") {
     grps <- paste0("assay_", assayNames.)
-    label <- paste0(label_prefix, .integer_string(seq_len(nrow(x))))
+    label <- paste0(labelPrefix, .integer_string(seq_len(nrow(x))))
     la <- length(assayNames.)
     suff <- c("", letters[seq_len(la - 1L)])
     data.frame(group = c(rep(grps, each = length(label)),
@@ -55,9 +55,9 @@ NULL
 
 #' @importMethodsFrom SummarizedExperiment rowData
 .labels_from_SummarizedExperiment <- function(x, assayNames. = assayNames(x),
-                                              label_prefix = "x0xx") {
+                                              labelPrefix = "x0xx") {
     d <- .data_from_SummarizedExperiment(x, assayNames. = assayNames.,
-                                         label_prefix = label_prefix)
+                                         labelPrefix = labelPrefix)
     l <- labels_from_data(d)
     an <- ""
     al <- length(assayNames.)
@@ -176,7 +176,7 @@ setMethod("groups", "SummarizedExperiment",
           function(object, assayNames. = assayNames(object),
                    labelPrefix = "x0xx") {
               .groups_from_SummarizedExperiment(
-                  object, assayNames. = assayNames., label_prefix = labelPrefix)
+                  object, assayNames. = assayNames., labelPrefix = labelPrefix)
           })
 
 #' @rdname chris-SummarizedExperiment
@@ -186,5 +186,5 @@ setMethod("labels", "SummarizedExperiment",
           function(object, assayNames. = assayNames(object),
                    labelPrefix = "x0xx") {
               .labels_from_SummarizedExperiment(
-                  object, assayNames. = assayNames., label_prefix = labelPrefix)
+                  object, assayNames. = assayNames., labelPrefix = labelPrefix)
           })

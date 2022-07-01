@@ -1,26 +1,26 @@
 # Export the Biocrates Metabolomics data
 
 Here we export the Biocrates-based targeted metabolomics data from CHRIS (and
-NAFLD) in the new CHRIS Textual File Format (CTFF) using the `chrisr` package.
+NAFLD) in the new Textual Dataset Format (TDF) using the `tidyfr` package.
 
 ```{r}
-library(chrisr)
+library(tidyfr)
 library(biochristes7500)
 
-data(biochristes7500)
+data("biochristes7500")
 ```
 
 Extract the *data*, *labels* and *groups* from the `SummarizedExperiment`.
 
 ```{r}
-data <- chris_data(biochristes7500, assayNames = c("concentrations", "flags"),
-                   labelPrefix = "x0pt")
+data <- data(biochristes7500, assayNames = c("concentrations", "flags"),
+             labelPrefix = "x0pt")
 
-labels <- chris_labels(
+labels <- labels(
     biochristes7500, assayNames = c("concentrations", "flags"),
     labelPrefix = "x0pt")
 
-groups <- chris_groups(
+groups <- groups(
     biochristes7500, assayNames = c("concentrations", "flags"),
     labelPrefix = "x0pt")
 ```
@@ -65,13 +65,13 @@ meta <- metadata(biochristes7500)
 data_version <- meta$value[meta$name == "version"]
 data_date <- meta$value[meta$name == "data_date"]
 
-export_ctff(name = "metabolomics_p180",
-            description = "Biocrates p180-based targeted metabolomics data",
-            version = "0.99.0",
-            date = data_date,
-            path = "/Users/jo/data/CHRIS/chris_baseline",
-            data = data, groups = groups, grp_labels = grp_labels,
-            labels = labels)
+export_tdf(name = "metabolomics_p180",
+           description = "Biocrates p180-based targeted metabolomics data",
+           version = "0.99.1",
+           date = data_date,
+           path = "/home/jo/data/CHRIS/chris_baseline",
+           data = data, groups = groups, grp_labels = grp_labels,
+           labels = labels)
 ```
 
 ## Evaluating export
@@ -79,22 +79,31 @@ export_ctff(name = "metabolomics_p180",
 Check that data is exported correctly.
 
 ```{r}
-p <- "/Users/jo/data/CHRIS/chris_baseline/metabolomics_p180/0.99.0/data/"
-chrisr:::.check_dataset_content(p)
+bp <- "/home/jo/data/CHRIS/chris_baseline"
 
-tmp <- chrisr:::.data(p)
+list_data_modules(bp)
+
+mdl <- data_module(name = "metabolomics_p180", version = "0.99.1", path = bp)
+mdl
+
+head(labels(mdl))
+head(groups(mdl))
+head(grp_labels(mdl))
+head(data)
+
+tmp <- data(mdl)
+
 mat <- as.matrix(t(tmp[, seq_len(nrow(biochristes7500)) + 1]))
-mat[mat == -89] <- NA
-
 library(testthat)
 expect_equal(unname(mat), unname(assay(biochristes7500)))
 
 flags <- as.matrix(t(tmp[, seq_len(nrow(biochristes7500)) + 176]))
-flags[flags == 1] <- 0
-flags[flags == 2] <- -9
-flags[flags == 3] <- -1
-flags[flags == 4] <- 1
-flags[flags == 5] <- -2
+flags[flags == "OK"] <- 0
+flags[flags == "Removed because of technical reason"] <- -9
+flags[flags == "Below lower level of quantification"] <- -1
+flags[flags == "Above upper level of quantification"] <- 1
+flags[flags == "Below level of detection"] <- -2
+flags <- apply(flags, c(1, 2), as.numeric)
 
 expect_equal(unname(flags), unname(assay(biochristes7500, "flags")))
 ```

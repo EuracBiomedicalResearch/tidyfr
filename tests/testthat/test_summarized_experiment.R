@@ -12,7 +12,7 @@ test_that(".data_from_SummarizedExperiment works", {
     expect_equal(colnames(res)[1L], "aid")
     expect_equal(nrow(res), ncol(se))
 
-    res <- .data_from_SummarizedExperiment(se, label_prefix = "aa")
+    res <- .data_from_SummarizedExperiment(se, labelPrefix = "aa")
     expect_equal(unname(res$aa01), unname(assay(se, "conc")["anlt1", ]))
     expect_equal(unname(res$aa01a), unname(assay(se, "twice")["anlt1", ]))
 
@@ -48,7 +48,7 @@ test_that(".groups_from_SummarizedExperiment works", {
                    "x0xx09", "x0xx09a", "x0xx10", "x0xx10a"))
 
     res <- .groups_from_SummarizedExperiment(se, assayNames. = "twice",
-                                             label_prefix = "aa")
+                                             labelPrefix = "aa")
     expect_true(is.data.frame(res))
     expect_equal(colnames(res), c("group", "label"))
     expect_equal(unique(res$group),
