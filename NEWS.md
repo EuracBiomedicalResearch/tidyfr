@@ -1,5 +1,9 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.6
+
+- Add vignette.
+
 ## Changes in 0.99.5
 
 - Store additional label information in a file labels_additional_information.txt

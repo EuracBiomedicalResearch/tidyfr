@@ -1,0 +1,121 @@
+---
+title: "Reading and Using Data in Textual Dataset File Format in R"
+package: tidyfr
+output:
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Reading and Using Data in Textual Dataset File Format in R}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+**Authors**: `r packageDescription("tidyfr")[["Author"]] `<br />
+**Last modified:** `r file.info("tidyfr.Rmd")$mtime`<br />
+**Compiled**: `r date()`
+
+# Introduction
+
+The Textual Dataset File Format (TDFF; sometimes referred to also as Textual
+Dataset Format) is a file format to store data from biomedical experiments in
+simple text files which enables easier extension, storage and editing. A
+detailed description of the format is provided
+[here](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format). The
+[tidyfr](https://github.com/EuracBiomedicalResearch/tidyfr) is an R package
+designed to facilitate import and export of data in TDF format to and from R.
+
+## General usage
+
+Data from different *modules* (i.e. data sets/sources) in TDFF are stored in
+separate folders under a base data directory. Note that also different versions
+for the same data set (module) are stored in separate folders hence allowing to
+load data from a specific version of a module.
+
+Below we use some (completely randomized) test data bundled within this package
+to illustrate the use of the `tidyfr` package. First we define the base data
+folder that contains the data sets.
+
+```{r}
+library(tidyfr)
+
+data_path <- system.file("txt", package = "tidyfr")
+```
+
+For *real* use of the package this `data_path` variable should point to the data
+directory containing the *real* data. We can next list available modules using
+the `list_data_modules` function:
+
+```{r}
+list_data_modules(data_path)
+```
+
+We can now choose one of the modules and load it by specifying its name, version
+and the base data path.
+
+```{r}
+mdl <- data_module(name = "db_example2", version = "1.0.1", path = data_path)
+```
+
+Various information from a module can be retrieved using the `moduleName`,
+`moduleDate`, `moduleDescription` and `moduleVersion` functions.
+
+```{r}
+moduleName(mdl)
+moduleDate(mdl)
+moduleDescription(mdl)
+moduleVersion(mdl)
+```
+
+The actual data from a data module can be retrieved with the `data`
+function. This function returns a `data.frame` and ensures that the data is
+correctly formatted (i.e. categorical variables are represented as factors, with
+the right categories, dates are formatted correctly and missing values are
+represented by `NA`).
+
+```{r}
+d <- data(mdl)
+d
+```
+
+Categorical variables are correctly converted to factors:
+
+```{r}
+d$x0_sex
+```
+
+Dates are converted into the correct format:
+
+```{r}
+d$x0_examd
+```
+
+Annotations (labels) for the individual variables can be retrieved using the
+`labels` function:
+
+```{r}
+labels(mdl)
+```
+
+The `groups` function retrieves the optional grouping of variables and the
+`grp_labels` function the description/definition of these groups.
+
+```{r}
+groups(mdl)
+grp_labels(mdl)
+```
+
+
+## Data export
+
+Data can be exported using the `export_tdf` function. See the help for this
+function for more details.
+
+# Session information
+
+```{r}
+sessionInfo()
+```

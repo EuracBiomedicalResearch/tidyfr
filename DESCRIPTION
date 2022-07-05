@@ -1,6 +1,6 @@
 Package: tidyfr
 Title: R Interface for the Textual Dataset Format
-Version: 0.99.5
+Version: 0.99.6
 Description: The tidyfr package provides import and export functionality for the
     Textual Dataset Format (TFD). The package takes care to correctly format the
     various data types, implements solutions for handling of different encodings
@@ -16,9 +16,13 @@ Imports:
     methods
 Suggests:
     testthat,
-    roxygen2
+    roxygen2,
+    knitr,
+    rmarkdown,
+    BiocStyle
 License: Artistic-2.0
 LazyData: false
+VignetteBuilder: knitr
 BugReports: https://github.com/EuracBiomedicalResearch/tidyfr/issues
 URL: https://github.com/EuracBiomedicalResearch/tidyfr
 Roxygen: list(markdown=TRUE)
