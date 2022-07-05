@@ -257,9 +257,8 @@ moduleDate <- function(object) object@date
 #'
 #' @noRd
 .read_dataset_file <- function(x, name) {
-    suppressWarnings(
-        read.table(paste0(file.path(x, name), ".txt"),
-                   sep = "\t", header = TRUE))
+    read.table(paste0(file.path(x, name), ".txt"),
+               sep = "\t", header = TRUE, quote = "", comment.char = "")
 }
 
 .data <- function(x) {
