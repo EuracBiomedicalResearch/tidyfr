@@ -20,10 +20,9 @@ BiocStyle::markdown()
 
 # Introduction
 
-The Textual Dataset File Format (TDFF; sometimes referred to also as Textual
-Dataset Format) is a file format to store data from biomedical experiments in
-simple text files which enables easier extension, storage and editing. A
-detailed description of the format is provided
+The Textual Dataset File Format (TDFF) is a file format to store data from
+biomedical experiments in simple text files which enables easier extension,
+storage and editing. A detailed description of the format is provided
 [here](https://wiki.gm.eurac.edu/index.php?title=Textual_Dataset_Format). The
 [tidyfr](https://github.com/EuracBiomedicalResearch/tidyfr) is an R package
 designed to facilitate import and export of data in TDF format to and from R.
@@ -39,7 +38,7 @@ Below we use some (completely randomized) test data bundled within this package
 to illustrate the use of the `tidyfr` package. First we define the base data
 folder that contains the data sets.
 
-```{r}
+```{r, message = FALSE}
 library(tidyfr)
 
 data_path <- system.file("txt", package = "tidyfr")
@@ -49,14 +48,14 @@ For *real* use of the package this `data_path` variable should point to the data
 directory containing the *real* data. We can next list available modules using
 the `list_data_modules` function:
 
-```{r}
+```{r, warning = FALSE}
 list_data_modules(data_path)
 ```
 
 We can now choose one of the modules and load it by specifying its name, version
 and the base data path.
 
-```{r}
+```{r, warning = FALSE}
 mdl <- data_module(name = "db_example2", version = "1.0.1", path = data_path)
 ```
 

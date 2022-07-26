@@ -3,6 +3,9 @@
 ## Changes in 0.99.6
 
 - Add vignette.
+- Fix import of data files: support `'` and `"`.
+- Fix validator for categorical variables: check only variables declared to be
+  categorical.
 
 ## Changes in 0.99.5
 

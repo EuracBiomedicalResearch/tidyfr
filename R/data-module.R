@@ -238,7 +238,11 @@ moduleDate <- function(object) object@date
         return(msgs)
     mapping <- .mapping(path)
     if (length(msgs <- .valid_mapping(mapping, stop = stop))) return(msgs)
-    if (length(msgs <- .valid_data_mapping_category_codes(data, mapping, stop)))
+    mapping_categorical <- mapping[
+        mapping$label %in% labels$label[labels$type == "categorical"], ,
+        drop = FALSE]
+    if (length(msgs <- .valid_data_mapping_category_codes(
+                   data, mapping_categorical, stop)))
         return(msgs)
     if (length(msgs <- .valid_labels_mapping_categories(labels, mapping, stop)))
         return(msgs)
