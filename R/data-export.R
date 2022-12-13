@@ -1,15 +1,31 @@
-#' @title Export data in the Textual Dataset Format
+#' @title Export data in the Textual Dataset File Format
 #'
 #' @aliases labels_from_data mapping_from_data
 #'
 #' @description
 #'
-#' The `export_tdf` exports the provided data in the TDF format. The function
+#' The `export_tdf` exports the provided data in the TDFF format. The function
 #' first creates all required folders, checks the input
-#' files and then exports the data in the TDF format (see below for more
+#' files and then exports the data in the TDFF format (see below for more
 #' information on this format).
 #'
-#' Automatic convertions performed by the function are:
+#' The data is organized in the following way:
+#'
+#' - Within the base directory `path` a folder `name` is created for the
+#'   data set.
+#' - Within a folder with the version of the data set (parameter `version`)
+#'   two folders *data* and *docs* are created. The actual data files
+#'   are stored in the *data* folder while the *docs* folder allows to
+#'   contains any documentation files (any file) related to the data set. The
+#'   *docs* folder contains also a file *docs.txt* that is supposed to
+#'   contain information for any added documentation file (this information
+#'   needs to be manually addedd).
+#' - Within the base folder (with the name of the data set) a *NEWS.md* file
+#'   is created which is supposed to be manually edited to add some
+#'   information or change log for the currently exported version of the
+#'   data.
+#'
+#' Automatic convertions performed by the export function are:
 #'
 #' - Columns in `data` that are of data type `factor` are correctly and
 #'   automatically converted to the expected format (i.e. their categories are
@@ -85,8 +101,10 @@
 #' @param labels `data.frame` with *annotations* to the variables (labels) in
 #'     `data`. See the TDF definition for details. Columns `"min"`, `"max"`
 #'     and `"missing"` will be filled by the `export_tdf` function if not
-#'     already provided. Defaults to `labels = labels_from_data()` hence creates
-#'     a *labels* `data.frame` from the provided `data`.
+#'     already provided. Defaults to `labels = labels_from_data()` hence
+#'     creates a *labels* `data.frame` from the provided `data`. Any
+#'     annotations that are not part of the pre-defined hard set of
+#'     columns are stored in a separate file *labels_additional_info.txt*.
 #'
 #' @param mapping `data.frame` with the definition of the levels (categories)
 #'     of the categorical variables in `labels`. Expected columns are
@@ -157,12 +175,18 @@ export_tdf <- function(name = character(), description = character(),
     if (!dir.exists(module_path)) dir.create(module_path)
     module_path <- file.path(module_path, version)
     if (!dir.exists(module_path)) dir.create(module_path)
+    docs_path <- file.path(module_path, "docs")
+    if (!dir.exists(docs_path)) dir.create(docs_path)
     module_path <- file.path(module_path, "data")
     if (!dir.exists(module_path)) dir.create(module_path)
     info_file <- file.path(module_path, "info.txt")
     if (file.exists(info_file))
         stop("A data set with the specified name and version does ",
              "already exist")
+    fl <- file.path(docs_path, "docs.txt")
+    file.create(fl)
+    writeLines("filename\tname\tdescription",
+               con = fl)
     ## Checking and exporting...
     if (nrow(data))
         .valid_data(data, stop = TRUE)
@@ -208,6 +232,19 @@ export_tdf <- function(name = character(), description = character(),
     .export_grp_labels(grp_labels, path = module_path)
     .export_labels(labels, path = module_path)
     .export_mapping(mapping, path = module_path)
+    ## Create a NEWS.md file.
+    news_file <- file.path(path, name, "NEWS.md")
+    if (file.exists(news_file)) {
+        con <- file(news_file)
+        open(con, open = "a")
+        writeLines("\n", con = con)
+    } else {
+        file.create(news_file)
+        con <- file(news_file)
+        open(con, open = "w")
+    }
+    writeLines(paste0("# ", name, " version ", version), con = con)
+    close(con)
     message("Data set was written to: ", module_path, "\n")
     invisible(module_path)
 }
@@ -306,7 +343,7 @@ mapping_from_data <- function(data) {
                   "version\t", version, "\n",
                   "date\t", date, "\n",
                   "export_date\t", date(), "\n",
-                  "export_info\texported with tidy version ",
+                  "export_info\texported with tidyfr version ",
                   packageVersion("tidyfr"), "\n")
     writeLines(out, con = file.path(path, "info.txt"))
 }
@@ -334,7 +371,7 @@ mapping_from_data <- function(data) {
     if (length(cn_add) > 1L)
         write.table(labels[, cn_add], sep = "\t", quote = FALSE, na = "",
                     row.names = FALSE,
-                    file = file.path(path, "labels_additional_information.txt"))
+                    file = file.path(path, "labels_additional_info.txt"))
 }
 
 .export_groups <- function(path = ".", groups = .empty_groups()) {

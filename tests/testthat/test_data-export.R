@@ -70,8 +70,8 @@ test_that(".export_labels works", {
     res <- read.table(file.path(fl, "labels.txt"), sep = "\t", header = TRUE)
     expect_equal(colnames(res), c("label", "unit", "type", "min", "max",
                                   "missing", "description"))
-    expect_true(file.exists(file.path(fl, "labels_additional_information.txt")))
-    res <- read.table(file.path(fl, "labels_additional_information.txt"),
+    expect_true(file.exists(file.path(fl, "labels_additional_info.txt")))
+    res <- read.table(file.path(fl, "labels_additional_info.txt"),
                       sep = "\t", header = TRUE)
     expect_equal(colnames(res), c("label", "other_col", "next_col"))
     expect_equal(res$label, 1:4)

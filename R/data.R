@@ -1,4 +1,4 @@
-#' @noRd
+ #' @noRd
 .format_data_export <- function(data, na = -89) {
     .valid_data(data, stop = TRUE)
     ## categorical/factor
@@ -55,6 +55,7 @@
 .format_categorical_import <- function(x, na, label, mapping, ...) {
     map <- mapping[mapping$label == label, ]
     x[x == na] <- NA
+    map <- map[map$code != na, , drop = FALSE]
     factor(map$value[match(x, map$code)], levels = map$value)
 }
 

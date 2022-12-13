@@ -1,5 +1,10 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.7
+
+- Data export writes also a *NEWS.md* file.
+- Importer for categorical values drops category representing `NA` encoding.
+
 ## Changes in 0.99.6
 
 - Add vignette.

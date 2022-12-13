@@ -4,7 +4,7 @@
 \alias{export_tdf}
 \alias{labels_from_data}
 \alias{mapping_from_data}
-\title{Export data in the Textual Dataset Format}
+\title{Export data in the Textual Dataset File Format}
 \usage{
 export_tdf(
   name = character(),
@@ -51,8 +51,10 @@ defined in \code{groups}.}
 \item{labels}{\code{data.frame} with \emph{annotations} to the variables (labels) in
 \code{data}. See the TDF definition for details. Columns \code{"min"}, \code{"max"}
 and \code{"missing"} will be filled by the \code{export_tdf} function if not
-already provided. Defaults to \code{labels = labels_from_data()} hence creates
-a \emph{labels} \code{data.frame} from the provided \code{data}.}
+already provided. Defaults to \code{labels = labels_from_data()} hence
+creates a \emph{labels} \code{data.frame} from the provided \code{data}. Any
+annotations that are not part of the pre-defined hard set of
+columns are stored in a separate file \emph{labels_additional_info.txt}.}
 
 \item{mapping}{\code{data.frame} with the definition of the levels (categories)
 of the categorical variables in \code{labels}. Expected columns are
@@ -68,12 +70,29 @@ the folder where the data was stored. \code{labels_from_data} returns a
 \emph{labels} \code{data.frame} based on the data in \code{data}.
 }
 \description{
-The \code{export_tdf} exports the provided data in the TDF format. The function
+The \code{export_tdf} exports the provided data in the TDFF format. The function
 first creates all required folders, checks the input
-files and then exports the data in the TDF format (see below for more
+files and then exports the data in the TDFF format (see below for more
 information on this format).
 
-Automatic convertions performed by the function are:
+The data is organized in the following way:
+\itemize{
+\item Within the base directory \code{path} a folder \code{name} is created for the
+data set.
+\item Within a folder with the version of the data set (parameter \code{version})
+two folders \emph{data} and \emph{docs} are created. The actual data files
+are stored in the \emph{data} folder while the \emph{docs} folder allows to
+contains any documentation files (any file) related to the data set. The
+\emph{docs} folder contains also a file \emph{docs.txt} that is supposed to
+contain information for any added documentation file (this information
+needs to be manually addedd).
+\item Within the base folder (with the name of the data set) a \emph{NEWS.md} file
+is created which is supposed to be manually edited to add some
+information or change log for the currently exported version of the
+data.
+}
+
+Automatic convertions performed by the export function are:
 \itemize{
 \item Columns in \code{data} that are of data type \code{factor} are correctly and
 automatically converted to the expected format (i.e. their categories are

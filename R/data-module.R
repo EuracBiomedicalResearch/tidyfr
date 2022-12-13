@@ -34,16 +34,24 @@
 #'   `integers`, `numeric`, `character` or date/time formats) according to the
 #'   *labels* information of the data module. Use the `labels` function to
 #'   retrieve variable information (annotation) from the data module.
+#'
 #' - `groups`: returns a `data.frame` with the optional grouping of variables.
 #'   The group descriptions are provided byt the `grp_labels` function.
+#'
 #' - `grp_labels`: returns a `data.frame` with a description for each defined
 #'   variable group.
+#'
 #' - `labels`: returns a `data.frame` with the description and annotation of the
 #'   individual variables (labels).
+#'
 #' - `moduleName`: returns the name of a module.
+#'
 #' - `modulePath`: returns the (full) file path to the data module.
+#'
 #' - `moduleVersion`: returns the version of the data module.
+#'
 #' - `moduleDescription`: returns the description of the module.
+#'
 #' - `moduleDate`: returns the date of the module.
 #'
 #' @param object A `DataModule` object.
@@ -286,12 +294,12 @@ moduleDate <- function(object) object@date
 .labels <- function(x) {
     l <- .read_dataset_file(x, "labels")
     rownames(l) <- l$label
-    if (file.exists(file.path(x, "labels_additional_information.txt"))) {
-        l_a <- .read_dataset_file(x, "labels_additional_information")
+    if (file.exists(file.path(x, "labels_additional_info.txt"))) {
+        l_a <- .read_dataset_file(x, "labels_additional_info")
         rownames(l_a) <- l_a$label
         l_a <- l_a[, !colnames(l_a) == "label", drop = FALSE]
         if (!all(rownames(l) %in% rownames(l_a)))
-            warning("Ignoring file \"labels_additional_information.txt\" ",
+            warning("Ignoring file \"labels_additional_info.txt\" ",
                     "because it is in a wrong format.")
         else l <- cbind(l, l_a[rownames(l), , drop = FALSE])
     }
