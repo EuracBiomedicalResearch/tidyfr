@@ -19,6 +19,10 @@ data <- data(biochristes7500, assayNames = c("concentrations", "flags"),
 labels <- labels(
     biochristes7500, assayNames = c("concentrations", "flags"),
     labelPrefix = "x0pt")
+labels$long_description <- labels$biochemical_name
+labels$long_description[grep("flags$", labels$description)] <-
+    paste0(labels$long_description[grep("flags$", labels$description)],
+           " flags")
 
 groups <- groups(
     biochristes7500, assayNames = c("concentrations", "flags"),
@@ -67,7 +71,7 @@ data_date <- meta$value[meta$name == "data_date"]
 
 export_tdf(name = "metabolomics_p180",
            description = "Biocrates p180-based targeted metabolomics data",
-           version = "0.99.1",
+           version = "0.99.2",
            date = data_date,
            path = "/home/jo/data/CHRIS/chris_baseline",
            data = data, groups = groups, grp_labels = grp_labels,
@@ -83,7 +87,7 @@ bp <- "/home/jo/data/CHRIS/chris_baseline"
 
 list_data_modules(bp)
 
-mdl <- data_module(name = "metabolomics_p180", version = "0.99.1", path = bp)
+mdl <- data_module(name = "metabolomics_p180", version = "0.99.2", path = bp)
 mdl
 
 head(labels(mdl))

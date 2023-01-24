@@ -18,6 +18,9 @@
 #' @param path `character(1)` specifying the directory where to look for CHRIS
 #'     data modules.
 #'
+#' @param quick `logical(1)` whether extensive validation of available data
+#'     modules should be skipped.
+#'
 #' @return See the individual function descriptions.
 #'
 #' @author Johannes Rainer
@@ -41,7 +44,7 @@ data_path <- function() {
 #' @rdname data_path
 #'
 #' @export
-list_data_modules <- function(path = data_path()) {
+list_data_modules <- function(path = data_path(), quick = TRUE) {
     if (!dir.exists(path))
         stop("Directory \"", path, "\" does not exist")
     mods <- list.dirs(path, full.names = TRUE, recursive = FALSE)
@@ -51,7 +54,7 @@ list_data_modules <- function(path = data_path()) {
         do.call(rbind, lapply(vers, function(y, module) {
             mod_path <- file.path(y, "data")
             if (dir.exists(mod_path) &&
-                is.logical(.valid_data_directory(mod_path))) {
+                is.logical(.valid_data_directory(mod_path, quick = quick))) {
                 inf <- .info(mod_path)
                 data.frame(
                     name = module, version = basename(y),

@@ -1,5 +1,10 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.8
+
+- Add function `remove_participants` function.
+- Add several utility functions.
+
 ## Changes in 0.99.7
 
 - Data export writes also a *NEWS.md* file.

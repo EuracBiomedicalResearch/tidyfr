@@ -298,3 +298,17 @@ test_that("labels,DataModule works", {
     expect_true(is.data.frame(res))
     expect_equal(rownames(res), res$label)
 })
+
+test_that("remove_participants works", {
+    pth <- system.file("txt", package = "tidyfr")
+    tmp <- data_module("db_example1", version = "1.0.0", path = pth)
+    tdir <- tempdir()
+
+    remove_participants(tmp, aid = "0010000123", path = tdir)
+
+    res <- data_module(basename(tdir), version = "1.0.0.1",
+                       path = .path_up(tdir, 1))
+    dta <- data(res)
+    ref <- data(tmp)
+    expect_true(nrow(dta) < nrow(ref))
+})

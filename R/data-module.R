@@ -54,10 +54,26 @@
 #'
 #' - `moduleDate`: returns the date of the module.
 #'
-#' @param object A `DataModule` object.
+#' @section Managing data modules:
+#'
+#' Data maintainers can use functions listed here to *manage* existing data
+#' resources. Alternatively, see also [export_tdf()] for information how to
+#' create new data modules in TDF format.
+#'
+#' - [remove_participants()]: create a new version of the current module by
+#'   removing participant data for individuals with the specified aids.
+#'
+#' @param base For `modulePath`: `logical(1)` whether the base folder or the
+#'     actual data folder should be returned. The *base* folder (returned with
+#'     `base = TRUE`) is the folder of the module containing eventual multiple
+#'     versions of it. The data folder (returned with `base = FALSE`, default)
+#'     is the actual folder containing the data for the selected version of
+#'     the module.
 #'
 #' @param name For `data_module`: `character(1)` defining the name of the
 #'     module to load.
+#'
+#' @param object A `DataModule` object.
 #'
 #' @param path For `data_module`: `character(1)` defining the path where data
 #'     modules are stored.
@@ -198,7 +214,12 @@ moduleName <- function(object) object@name
 #' @rdname DataModule
 #'
 #' @export
-modulePath <- function(object) object@path
+modulePath <- function(object, base = FALSE) {
+    p <- object@path
+    if (base)
+        p <- .path_up(p, 2L)
+    p
+}
 
 #' @rdname DataModule
 #'
@@ -220,7 +241,7 @@ moduleDate <- function(object) object@date
 #' coherent
 #'
 #' @noRd
-.valid_data_directory <- function(path, stop = FALSE) {
+.valid_data_directory <- function(path, stop = FALSE, quick = FALSE) {
     fls <- dir(path)
     msgs <- character()
     if (!all(c("data.txt", "groups.txt", "grp_labels.txt",
@@ -233,35 +254,39 @@ moduleDate <- function(object) object@date
             stop(msgs)
         else return(msgs)
     }
-    ## Test individual files; stop/return after each (because following tests
-    ## depend on these).
-    if (length(msgs <- .valid_info(.info(path), stop = stop))) return(msgs)
-    data <- .data(path)
-    if (length(msgs <- .valid_data(data, stop = stop))) return(msgs)
-    labels <- .labels(path)
-    if (length(msgs <- .valid_labels(labels, stop = stop))) return(msgs)
-    if (length(msgs <- .valid_labels_data_types(labels, stop = stop)))
-        return(msgs)
-    if (length(msgs <- .valid_data_labels(data, labels, stop = stop)))
-        return(msgs)
-    mapping <- .mapping(path)
-    if (length(msgs <- .valid_mapping(mapping, stop = stop))) return(msgs)
-    mapping_categorical <- mapping[
-        mapping$label %in% labels$label[labels$type == "categorical"], ,
-        drop = FALSE]
-    if (length(msgs <- .valid_data_mapping_category_codes(
-                   data, mapping_categorical, stop)))
-        return(msgs)
-    if (length(msgs <- .valid_labels_mapping_categories(labels, mapping, stop)))
-        return(msgs)
-    groups <- .groups(path)
-    if (length(msgs <- .valid_groups(groups, stop = stop))) return(msgs)
-    if (length(msgs <- .valid_data_groups(data, groups, stop = stop)))
-        return(msgs)
-    grp_labels <- .grp_labels(path)
-    if (length(msgs <- .valid_grp_labels(grp_labels, stop = stop))) return(msgs)
-    if (length(msgs <- .valid_groups_grp_labels(
-                   groups, grp_labels, stop = stop))) return(msgs)
+    if (!quick) {
+        ## Test individual files; stop/return after each (because following
+        ## tests depend on these).
+        if (length(msgs <- .valid_info(.info(path), stop = stop))) return(msgs)
+        data <- .data(path)
+        if (length(msgs <- .valid_data(data, stop = stop))) return(msgs)
+        labels <- .labels(path)
+        if (length(msgs <- .valid_labels(labels, stop = stop))) return(msgs)
+        if (length(msgs <- .valid_labels_data_types(labels, stop = stop)))
+            return(msgs)
+        if (length(msgs <- .valid_data_labels(data, labels, stop = stop)))
+            return(msgs)
+        mapping <- .mapping(path)
+        if (length(msgs <- .valid_mapping(mapping, stop = stop))) return(msgs)
+        mapping_categorical <- mapping[
+            mapping$label %in% labels$label[labels$type == "categorical"], ,
+            drop = FALSE]
+        if (length(msgs <- .valid_data_mapping_category_codes(
+                       data, mapping_categorical, stop)))
+            return(msgs)
+        if (length(msgs <- .valid_labels_mapping_categories(
+                       labels, mapping, stop)))
+            return(msgs)
+        groups <- .groups(path)
+        if (length(msgs <- .valid_groups(groups, stop = stop))) return(msgs)
+        if (length(msgs <- .valid_data_groups(data, groups, stop = stop)))
+            return(msgs)
+        grp_labels <- .grp_labels(path)
+        if (length(msgs <- .valid_grp_labels(grp_labels, stop = stop)))
+            return(msgs)
+        if (length(msgs <- .valid_groups_grp_labels(
+                       groups, grp_labels, stop = stop))) return(msgs)
+    }
     TRUE
 }
 
@@ -509,4 +534,59 @@ NULL
     if (stop && length(msgs))
         stop(msgs)
     msgs
+}
+
+#' @title Remove data for selected participants
+#'
+#' @description
+#'
+#' The `remove_participants` function creates a new version of an existing
+#' data module removing any data for the selected individuals (parameter
+#' `aid`). The function will:
+#'
+#' - bump the version of the module (incrementing the 4th position in the
+#'   *x.y.z.a* version scheme).
+#' - create a new folder (name being the new version) in the directory `path`.
+#' - copy all files from the original module (version) to the new folder.
+#' - remove all entries (rows) in the *data.txt* files with their `aid` label
+#'   matching `aid`.
+#' - validate the new data module.
+#'
+#' @param x `DataModule` from which data of a participant should be removed.
+#'
+#' @param aid `character` with the IDs (label `"aid"`) of the participants for
+#'     whom data should be removed. Note that [format_aid()] will be called
+#'     on this parameter to ensure the format of the AID matches.
+#'
+#' @param path `character(1)` defining the path where the new version of the
+#'     data set should be stored into. Defaults to the base path of the
+#'     current module.
+#'
+#' @return `character(1)` with the path to the folder containing the new
+#'     version.
+#'
+#' @author Johannes Rainer
+#'
+#' @export
+remove_participants <- function(x, aid, path = modulePath(x, base = TRUE)) {
+    new_version <- .bump_version(moduleVersion(x))
+    ov_path <- .path_up(modulePath(x), 1)
+    nv_path <- file.path(path, new_version)
+    if (dir.exists(nv_path))
+        stop("Version ", new_version, " does already exist in ", path)
+    dir.create(nv_path)
+    fls <- list.files(path = ov_path, full.names = TRUE)
+    file.copy(fls, recursive = TRUE, to = nv_path, copy.date = TRUE)
+    dta <- .data(file.path(nv_path, "data"))
+    if (!any(colnames(dta) == "aid"))
+        stop("data does not contain the required column \"aid\".")
+    dta$aid <- format_aid(dta$aid)
+    aid <- format_aid(aid)
+    rem <- dta$aid %in% aid
+    .export_data(dta[!rem, , drop = FALSE], path = file.path(nv_path, "data"))
+    message("Removed data for ", sum(rem), " individuals.")
+    .valid_data_directory(file.path(nv_path, "data") , stop = TRUE)
+    message("New version created. You might now want to check the directory\n",
+            nv_path, "\nand update/fix documentation, NEWS and description.")
+    nv_path
 }

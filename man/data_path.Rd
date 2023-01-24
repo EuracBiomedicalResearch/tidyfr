@@ -7,11 +7,14 @@
 \usage{
 data_path()
 
-list_data_modules(path = data_path())
+list_data_modules(path = data_path(), quick = TRUE)
 }
 \arguments{
 \item{path}{\code{character(1)} specifying the directory where to look for CHRIS
 data modules.}
+
+\item{quick}{\code{logical(1)} whether extensive validation of available data
+modules should be skipped.}
 }
 \value{
 See the individual function descriptions.

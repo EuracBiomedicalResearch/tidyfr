@@ -1,0 +1,114 @@
+# Working with CHRIS data
+
+In this document we inspect and load various CHRIS data sets with the `tidyfr`
+package.
+
+```{r}
+library(tidyfr)
+
+chris_path <- "/home/jo/data/CHRIS/2022-12-13"
+
+list_data_modules(chris_path)
+```
+
+Some of modules (specifically *clinical_traits* and *interview*).
+
+```{r}
+int <- data_module(name = "interview",
+                   version = "0.1.1",
+                   path = chris_path)
+
+dta <- data(int)
+
+table(dta$x0pe05d)
+sum(is.na(dta$x0pe05d))
+```
+
+
+## Test failing modules
+
+```{r}
+data_module(name = "interview",
+            version = "0.1.1",
+            path = chris_path)
+
+tmp <- read.table(file.path(chris_path, "interview",
+                            "0.1.1", "data", "data.txt"),
+                  sep = "\t", header = TRUE, quote = "",
+                  comment.char = "")
+table(tmp$x0pe05d)
+sum(is.na(tmp$x0pe05d))
+table(tmp$x0pe05e)
+
+lbls <- read.table(file.path(chris_path, "interview",
+                             "0.1.1", "data", "labels.txt"),
+                   sep = "\t", header = TRUE, quote = "",
+                   comment.char = "")
+rownames(lbls) <- lbls$label
+lbls[c("x0pe05d", "x0pe05e"), ]
+
+mpng <- read.table(file.path(chris_path, "interview",
+                             "0.1.1", "data", "mapping.txt"),
+                   sep = "\t", header = TRUE, quote = "",
+                   comment.char = "")
+
+a <- table(tmp$x0pe05d)
+cats <- mpng[mpng$label == "x0pe05d", "code"]
+sum(!names(a) %in% cats)
+```
+
+```{r}
+data_module(name = "clinical_traits",
+            version = "0.1.1",
+            path = chris_path)
+
+tmp <- read.table(file.path(chris_path, "clinical_traits",
+                            "0.1.1", "data", "data.txt"),
+                  sep = "\t", header = TRUE, quote = "",
+                  comment.char = "")
+table(tmp$x0an08e)
+sum(is.na(tmp$x0an08e))
+table(tmp$x0an08f)
+table(tmp$x0an08g)
+
+lbls <- read.table(file.path(chris_path, "clinical_traits",
+                             "0.1.1", "data", "labels.txt"),
+                   sep = "\t", header = TRUE, quote = "",
+                   comment.char = "")
+rownames(lbls) <- lbls$label
+lbls[c("x0an08e", "x0an08f", "x0an08g"), ]
+
+mpng <- read.table(file.path(chris_path, "clinical_traits",
+                             "0.1.1", "data", "mapping.txt"),
+                   sep = "\t", header = TRUE, quote = "",
+                   comment.char = "")
+
+a <- table(tmp$x0an08e)
+cats <- mpng[mpng$label == "x0pe05d", "code"]
+sum(!names(a) %in% cats)
+```
+
+
+
+## Testing some of the modules
+
+```{r}
+mod <- data_module(name = "metabolomics_p180",
+                   version = "0.99.1",
+                   path = chris_path)
+mod
+```
+
+Getting access to some of the data.
+
+```{r}
+groups(mod)
+dta <- data(mod)
+head(labels(mod))
+```
+
+```{r}
+mod <- data_module(name = "administrative",
+                   version = "0.1.1",
+                   path = chris_path)
+```

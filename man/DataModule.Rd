@@ -25,7 +25,7 @@ grp_labels(object)
 
 moduleName(object)
 
-modulePath(object)
+modulePath(object, base = FALSE)
 
 moduleVersion(object)
 
@@ -44,6 +44,13 @@ module to load.}
 modules are stored.}
 
 \item{object}{A \code{DataModule} object.}
+
+\item{base}{For \code{modulePath}: \code{logical(1)} whether the base folder or the
+actual data folder should be returned. The \emph{base} folder (returned with
+\code{base = TRUE}) is the folder of the module containing eventual multiple
+versions of it. The data folder (returned with \code{base = FALSE}, default)
+is the actual folder containing the data for the selected version of
+the module.}
 }
 \value{
 See the individual function description.
@@ -92,6 +99,18 @@ individual variables (labels).
 \item \code{moduleVersion}: returns the version of the data module.
 \item \code{moduleDescription}: returns the description of the module.
 \item \code{moduleDate}: returns the date of the module.
+}
+}
+
+\section{Managing data modules}{
+
+
+Data maintainers can use functions listed here to \emph{manage} existing data
+resources. Alternatively, see also \code{\link[=export_tdf]{export_tdf()}} for information how to
+create new data modules in TDF format.
+\itemize{
+\item \code{\link[=remove_participants]{remove_participants()}}: create a new version of the current module by
+removing participant data for individuals with the specified aids.
 }
 }
 

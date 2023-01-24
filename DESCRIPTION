@@ -1,6 +1,6 @@
 Package: tidyfr
 Title: R Interface for the Textual Dataset Format
-Version: 0.99.7
+Version: 0.99.8
 Description: The tidyfr package provides import and export functionality for the
     Textual Dataset Format (TFD). The package takes care to correctly format the
     various data types, implements solutions for handling of different encodings
