@@ -4,6 +4,12 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/tidyfr.html</loc>
+  </url>
+  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
@@ -13,21 +19,27 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/CTFF.html</loc>
+    <loc>/reference/DataModule.html</loc>
   </url>
   <url>
-    <loc>/reference/DataModule.html</loc>
+    <loc>/reference/TDF.html</loc>
   </url>
   <url>
     <loc>/reference/chris-SummarizedExperiment.html</loc>
   </url>
   <url>
-    <loc>/reference/chris_data_path.html</loc>
+    <loc>/reference/data_path.html</loc>
   </url>
   <url>
-    <loc>/reference/export_ctff.html</loc>
+    <loc>/reference/export_tdf.html</loc>
+  </url>
+  <url>
+    <loc>/reference/format_aid.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/remove_participants.html</loc>
   </url>
 </urlset>
