@@ -1,3 +1,3 @@
 aid	x0_sex	x0_age	x0_ager	x0_birthd	x0_birthpc	x0_residpc	x0_examd	x0_workf	x0_note	x0_notesaliva	x0_noteint	x0_noteself	x0_notespiro	x0_birthm	x0_birthy	x0_examm	x0_examy
-0010100017	2	39.61465	40	1973-02-04	1	6	2015-02-02	G	something	something else	missing	missing	missing	2	1973	2	2015
-0010200056	1	56.44558	56	1950-08-08	1	5	2012-01-01	E	missing	missing	missing	missing	missing	08	1950	1	2012
+0010100001	2	19.61465	20	1983-01-04	1	6	2016-01-02	G	something	something else	missing	missing	missing	2	1983	2	2016
+0010200002	1	54.44558	54	1956-03-08	1	5	2012-02-01	E	missing	missing	missing	missing	missing	03	1956	1	2012

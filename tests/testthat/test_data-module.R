@@ -306,7 +306,7 @@ test_that("remove_participants works", {
     tdir <- file.path(tdir, "test_mod")
     dir.create(tdir)
 
-    remove_participants(tmp, aid = "0010000123", path = tdir)
+    remove_participants(tmp, aid = "0010000104", path = tdir)
 
     res <- data_module(basename(tdir), version = "1.0.0.1",
                        path = .path_up(tdir, 1))
