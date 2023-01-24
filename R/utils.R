@@ -11,8 +11,8 @@
 #'
 #' @noRd
 .path_up <- function(p, x = integer()) {
-    p <- unlist(strsplit(p, "/", fixed = TRUE))
-    paste0(p[seq_len(length(p) - x)], collapse = "/")
+    p <- unlist(strsplit(p, .Platform$file.sep, fixed = TRUE))
+    paste0(p[seq_len(length(p) - x)], collapse = .Platform$file.sep)
 }
 
 #' @title Format AIDs adding leading 0s

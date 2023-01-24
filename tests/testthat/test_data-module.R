@@ -303,6 +303,8 @@ test_that("remove_participants works", {
     pth <- system.file("txt", package = "tidyfr")
     tmp <- data_module("db_example1", version = "1.0.0", path = pth)
     tdir <- tempdir()
+    tdir <- file.path(tdir, "test_mod")
+    dir.create(tdir)
 
     remove_participants(tmp, aid = "0010000123", path = tdir)
 
