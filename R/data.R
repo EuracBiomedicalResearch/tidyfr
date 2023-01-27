@@ -39,7 +39,9 @@
 }
 
 .format_aid <- function(x, length = 10) {
-    sprintf(paste0("%0", length, "d"), x)
+    if (is.numeric(x))
+        sprintf(paste0("%0", length, "d"), x)
+    else x
 }
 
 .format_float_import <- function(x, na, ...) {

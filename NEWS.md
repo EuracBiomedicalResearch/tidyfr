@@ -1,5 +1,10 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.9
+
+- Skip (re)formatting of AIDs if AIDs are provided as `character` (assuming that
+  they are already in the correct format).
+
 ## Changes in 0.99.8
 
 - Add function `remove_participants` function.
