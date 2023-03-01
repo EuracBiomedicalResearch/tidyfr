@@ -16,6 +16,29 @@ Extract the *data*, *labels* and *groups* from the `SummarizedExperiment`.
 data <- data(biochristes7500, assayNames = c("concentrations", "flags"),
              labelPrefix = "x0pt")
 
+data("qcs_fia")
+data("qcs_lcms")
+
+qc_types <- unique(qcs_fia$sample_name)
+cv_fia <- lapply("QC CHRIS Pool", function(z) {
+    rowRsd(concentrations(qcs_fia[, qcs_fia$sample_name == z],
+                          blessing = "none"))
+})
+cv_fia <- unlist(cv_fia)
+
+cv_lcms <- lapply("QC CHRIS Pool", function(z) {
+    rowRsd(concentrations(qcs_lcms[, qcs_lcms$sample_name == z],
+                          blessing = "none"))
+})
+cv_lcms <- unlist(cv_lcms)
+
+cvs <- rep(NA_real_, nrow(biochristes7500))
+cvs[match(names(cv_fia), rownames(rowData(biochristes7500)))] <- cv_fia
+cvs[match(names(cv_lcms), rownames(rowData(biochristes7500)))] <- cv_lcms
+
+rowData(biochristes7500)$cv_qc_chris <- cvs
+
+
 labels <- labels(
     biochristes7500, assayNames = c("concentrations", "flags"),
     labelPrefix = "x0pt")
@@ -70,8 +93,8 @@ data_version <- meta$value[meta$name == "version"]
 data_date <- meta$value[meta$name == "data_date"]
 
 export_tdf(name = "metabolomics_p180",
-           description = "Biocrates p180-based targeted metabolomics data",
-           version = "0.99.2",
+           description = "Targeted metabolomics data based on the Biocrates p180 kit comprising measured concentrations of 175 metabolites and lipids in serum samples of CHRIS participants.",
+           version = "1.0.1.0",
            date = data_date,
            path = "/home/jo/data/CHRIS/chris_baseline",
            data = data, groups = groups, grp_labels = grp_labels,
@@ -87,7 +110,7 @@ bp <- "/home/jo/data/CHRIS/chris_baseline"
 
 list_data_modules(bp)
 
-mdl <- data_module(name = "metabolomics_p180", version = "0.99.2", path = bp)
+mdl <- data_module(name = "metabolomics_p180", version = "1.0.1.0", path = bp)
 mdl
 
 head(labels(mdl))
