@@ -1,5 +1,10 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.12
+
+- Add script to create the CHRIS Somalogic TDFF module.
+- Add Rmd describing usage of the CHRIS Somalogic module.
+
 ## Changes in 0.99.11
 
 - Use AIDs as `rownames` for the `data.frame` returned by `data` and drop
