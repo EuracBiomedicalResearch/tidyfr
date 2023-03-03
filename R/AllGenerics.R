@@ -5,7 +5,7 @@ setGeneric("groups", function(object, ...)
 
 #' @title Textual Dataset Format
 #'
-#' @aliases data labels groups
+#' @aliases labels groups
 #'
 #' @description
 #'
@@ -53,21 +53,23 @@ setGeneric("groups", function(object, ...)
 #'
 #' @author Johannes Rainer
 #'
-#' @export data
-#'
 #' @name TDF
 NULL
 
 #' @importFrom methods is validObject
-data <- function(...) {
+#'
+#' @export data
+#'
+#' @rdname DataModule
+data <- function(..., aidAsRownames = TRUE) {
     vars <- list(...)
     if (length(vars) && inherits(vars[[1L]], "SummarizedExperiment")) {
         names(vars)[1L] <- "x"
         return(do.call(.data_from_SummarizedExperiment, vars, quote = TRUE))
     }
     if (length(vars) && is(vars[[1L]], "DataModule")) {
-        validObject(vars[[1L]])
-        return(.data_import(modulePath(vars[[1L]]), ...))
+        return(.data_import(modulePath(vars[[1L]]),
+                            aidAsRownames = aidAsRownames))
     }
     utils::data(...)
 }

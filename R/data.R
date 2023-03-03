@@ -19,7 +19,7 @@
 #' @param path `character(1)` with the module path
 #'
 #' @noRd
-.data_import <- function(path, ...) {
+.data_import <- function(path, aidAsRownames = TRUE, ...) {
     d <- .data(path)
     l <- .labels(path)
     m <- .mapping(path)
@@ -34,6 +34,18 @@
         if (!is.null(fun))
             d[[label]] <- fun(d[, label], na = na, label = label, mapping = m)
         else warning("No formatter for ", l[l$label == label, "type"])
+    }
+    if (any(colnames(d) == "aid")) {
+        if (length(unique(d$aid)) != nrow(d) && aidAsRownames) {
+            aidAsRownames <- FALSE
+            warning("Column 'aid' has non-unique entries; can not use it as ",
+                    "row names for 'data'; aids are reported in an ",
+                    "additional column \"aid\".")
+        }
+        if (aidAsRownames) {
+            rownames(d) <- d$aid
+            d$aid <- NULL
+        }
     }
     d
 }

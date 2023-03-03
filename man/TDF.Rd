@@ -2,7 +2,6 @@
 % Please edit documentation in R/AllGenerics.R
 \name{TDF}
 \alias{TDF}
-\alias{data}
 \alias{labels}
 \alias{groups}
 \title{Textual Dataset Format}

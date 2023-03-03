@@ -28,12 +28,17 @@
 #'
 #' @section Accessing properties and data from a module:
 #'
-#' - `data`: returns the data of a module as a `data.frame`. Column `"aid"`
-#'   contains the identifiers of individuals (participants). Columns (variables)
-#'   in the returned `data.frame` are correctly formatted (i.e. as `factors`,
-#'   `integers`, `numeric`, `character` or date/time formats) according to the
-#'   *labels* information of the data module. Use the `labels` function to
-#'   retrieve variable information (annotation) from the data module.
+#' - `data`: returns the data of a module as a `data.frame`. By default (with
+#'   parameter `aidAsRownames = TRUE`) *aid*s provided by the data module
+#'   will be used as row names for the returned `data.frame`.
+#'   For `aidAsRownames = FALSE` or if the aids provided by the module are not
+#'   unique, a column `"aid"` is added (as first column) to the returned
+#'   `data.frame`.
+#'   Columns (variables) in the returned `data.frame` are correctly formatted
+#'   (i.e. as `factors`, `integers`, `numeric`, `character` or date/time
+#'   formats) according to the *labels* information of the data module. Use
+#'   the `labels` function to retrieve variable information (annotation)
+#'   from the data module.
 #'
 #' - `groups`: returns a `data.frame` with the optional grouping of variables.
 #'   The group descriptions are provided byt the `grp_labels` function.
@@ -63,6 +68,10 @@
 #' - [remove_participants()]: create a new version of the current module by
 #'   removing participant data for individuals with the specified aids.
 #'
+#' @param aidAsRownames optional parameter for `data`: if `TRUE` (the default)
+#'     the AIDs provided by the data module are used as row names of the
+#'     returned `data.frame` (unless they are not unique).
+#'
 #' @param base For `modulePath`: `logical(1)` whether the base folder or the
 #'     actual data folder should be returned. The *base* folder (returned with
 #'     `base = TRUE`) is the folder of the module containing eventual multiple
@@ -80,6 +89,8 @@
 #'
 #' @param version For `data_module`: `character(1)` defining the version of the
 #'     module to load.
+#'
+#' @param ... For `data`: additional arguments.
 #'
 #' @return See the individual function description.
 #'

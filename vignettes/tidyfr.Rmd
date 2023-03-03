@@ -73,7 +73,10 @@ The actual data from a data module can be retrieved with the `data`
 function. This function returns a `data.frame` and ensures that the data is
 correctly formatted (i.e. categorical variables are represented as factors, with
 the right categories, dates are formatted correctly and missing values are
-represented by `NA`).
+represented by `NA`). The AIDs (identifiers of the samples) provided by the data
+module are used as row names of the `data.frame` (if these AIDs are not unique,
+i.e., some AIDs are duplicated, AIDs are **not** used as row names but provided
+in an additional column `"aid"` in the returned `data.frame`).
 
 ```{r}
 d <- data(mdl)

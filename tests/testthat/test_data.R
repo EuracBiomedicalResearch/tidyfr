@@ -106,12 +106,15 @@ test_that(".format_boolean_import works", {
 
 test_that(".data_import works", {
     p1 <- system.file("txt", "db_example1", "1.0.0", "data", package = "tidyfr")
-    res <- .data_import(p1)
+    res <- tidyfr:::.data_import(p1)
+    res2 <- tidyfr:::.data_import(p1, aidAsRownames = FALSE)
+    expect_equal(colnames(res2), c("aid", colnames(res)))
+    expect_equal(res2$aid, rownames(res))
     expect_true(is.factor(res$x0_sex))
     expect_equal(levels(res$x0_sex), c("Male", "Female"))
     expect_true(is.numeric(res$x0_age))
     expect_true(is.integer(res$x0_ager))
-    expect_equal(grep("^001", res$aid), seq_len(nrow(res)))
+    expect_equal(grep("^001", rownames(res)), seq_len(nrow(res)))
 
     p2 <- system.file("txt", "db_example2", "1.0.0", "data", package = "tidyfr")
     res <- .data_import(p2)

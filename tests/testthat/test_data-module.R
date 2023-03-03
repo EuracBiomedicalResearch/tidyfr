@@ -240,16 +240,19 @@ test_that("data_module works", {
 test_that("data,DataModule works", {
     tmp <- new("DataModule")
     tmp@path <- "does not exist"
-    expect_error(data(tmp), "does not exist")
+    expect_warning(expect_error(data(tmp), "connection"), "such file")
 
     pth <- system.file("txt", package = "tidyfr")
     dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
 
-    res <- data(dm)
+    res <- data(dm, aidAsRownames = FALSE)
     expect_true(is.data.frame(res))
     expect_equal(colnames(res), c("aid", "x0_sex", "x0_age", "x0_ager"))
     expect_equal(res$x0_ager, c(35L, NA_integer_, 52L, 56L, 62L, 54L, 53L))
     expect_true(is.factor(res$x0_sex))
+    res <- data(dm)
+    expect_true(is.data.frame(res))
+    expect_equal(colnames(res), c("x0_sex", "x0_age", "x0_ager"))
 
     dm <- data_module(name = "db_example2", version = "1.0.1", path = pth)
     res <- data(dm)
