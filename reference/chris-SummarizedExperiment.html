@@ -53,7 +53,7 @@ rownames of the SummarizedExperiment are returned in columns
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidyfr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.13</span>
       </span>
     </div>
 
@@ -250,57 +250,57 @@ available annotations from the <code>SummarizedExperiment</code>'s <code>rowData
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Get a data.frame with all variables</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="DataModule.html">data</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    aid      x0xx1       x0xx2       x0xx3        x0xx4       x0xx5      x0xx6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1  0.5567302 -0.09520845  2.11315600  0.972129776 -1.26991127 -1.5551962</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2  0.3956265  1.36362661  0.76520760  0.278620226  0.19949397  0.7850376</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3 -1.4692384  0.25546462  1.01714984 -0.001289311 -0.03519383 -0.4931104</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4  0.3256285 -0.12890811  0.62022902 -0.470074036  0.51123307 -0.3736248</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    5 -0.9056840  1.11633106 -0.44040027 -0.655573286 -1.16239667  0.1949447</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    6 -0.7675933  1.85275146 -0.90128831  1.360436414  0.20363568  0.7828080</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    7 -0.5624804  0.25394048  0.05305774  0.349967696  0.27922400 -0.5734761</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    8  0.9922819 -0.02482917 -0.73887599 -1.109699244 -1.77459684  2.6183645</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    9  0.4217502 -0.49565310  0.66054375  0.888009891  1.34036817 -0.2038433</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  10  1.5338855 -1.38184100 -1.11738962 -0.136999576  1.06469676  0.1738778</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        x0xx1a      x0xx2a     x0xx3a       x0xx4a      x0xx5a     x0xx6a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1.1134604 -0.19041691  4.2263120  1.944259552 -2.53982254 -3.1103924</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.7912530  2.72725321  1.5304152  0.557240452  0.39898794  1.5700753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  -2.9384769  0.51092925  2.0342997 -0.002578622 -0.07038766 -0.9862209</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.6512570 -0.25781622  1.2404580 -0.940148072  1.02246615 -0.7472497</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -1.8113680  2.23266212 -0.8808005 -1.311146572 -2.32479334  0.3898894</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -1.5351865  3.70550292 -1.8025766  2.720872827  0.40727137  1.5656160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -1.1249607  0.50788096  0.1061155  0.699935391  0.55844800 -1.1469522</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   1.9845638 -0.04965834 -1.4777520 -2.219398488 -3.54919368  5.2367291</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   0.8435004 -0.99130620  1.3210875  1.776019782  2.68073634 -0.4076866</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  3.0677709 -2.76368201 -2.2347792 -0.273999153  2.12939351  0.3477556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    aid       x0xx1        x0xx2      x0xx3      x0xx4      x0xx5       x0xx6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    1  0.66909372  0.993586412 -1.4786561  1.4161944 -2.9334191 -0.26874033</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2 -0.95736189 -1.197911525 -0.6778677  3.3071916  1.2198376 -0.97666447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3  0.06274994  0.439767069 -0.9306472  1.3097516 -0.3602447 -0.60372719</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    4 -1.79128120  0.007983318  0.5733505  0.5423926  0.5188731  0.55061256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    5 -0.13717583  0.383952933  0.0978112 -2.3995553  0.4303190 -0.05563865</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    6 -0.19590868  0.346915735  1.8801182  1.2065451 -1.0154142  0.75400807</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    7 -0.65728268  1.059985252  0.2827425 -1.1563446 -1.3240361 -0.18240744</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    8 -0.64577734  0.219850481 -1.4764679 -0.8948869 -1.2494549 -0.21649079</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    9  0.65973079 -0.098458592 -0.3251211  0.5671879 -0.6048577 -0.53060849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  10 -0.80468221  0.235914619  0.8448728  0.6907579 -0.6405748 -1.12909900</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        x0xx1a      x0xx2a     x0xx3a    x0xx4a     x0xx5a     x0xx6a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1.3381874  1.98717282 -2.9573123  2.832389 -5.8668383 -0.5374807</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  -1.9147238 -2.39582305 -1.3557355  6.614383  2.4396752 -1.9533289</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   0.1254999  0.87953414 -1.8612944  2.619503 -0.7204894 -1.2074544</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  -3.5825624  0.01596664  1.1467011  1.084785  1.0377461  1.1012251</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  -0.2743517  0.76790587  0.1956224 -4.799111  0.8606381 -0.1112773</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  -0.3918174  0.69383147  3.7602365  2.413090 -2.0308284  1.5080161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  -1.3145654  2.11997050  0.5654850 -2.312689 -2.6480722 -0.3648149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  -1.2915547  0.43970096 -2.9529359 -1.789774 -2.4989098 -0.4329816</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   1.3194616 -0.19691718 -0.6502423  1.134376 -1.2097154 -1.0612170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 -1.6093644  0.47182924  1.6897456  1.381516 -1.2811495 -2.2581980</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Get the label information</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="TDF.html">labels</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         label unit  type       min      max missing      description analyte_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx1   x0xx1      float -1.469238 1.533885     -89              id1        id1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx2   x0xx2      float -1.381841 1.852751     -89              id2        id2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx3   x0xx3      float -1.117390 2.113156     -89              id3        id3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx4   x0xx4      float -1.109699 1.360436     -89              id4        id4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx5   x0xx5      float -1.774597 1.340368     -89              id5        id5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx6   x0xx6      float -1.555196 2.618365     -89              id6        id6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx1a x0xx1a      float -2.938477 3.067771     -89 id1 assay double        id1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx2a x0xx2a      float -2.763682 3.705503     -89 id2 assay double        id2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx3a x0xx3a      float -2.234779 4.226312     -89 id3 assay double        id3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx4a x0xx4a      float -2.219398 2.720873     -89 id4 assay double        id4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx5a x0xx5a      float -3.549194 2.680736     -89 id5 assay double        id5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx6a x0xx6a      float -3.110392 5.236729     -89 id6 assay double        id6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        analyte_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx1             a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx2             b</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx3             c</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx4             d</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx5             e</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx6             f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx1a            a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx2a            b</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx3a            c</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx4a            d</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx5a            e</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx6a            f</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         label unit  type       min       max missing      description</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx1   x0xx1      float -1.791281 0.6690937     -89              id1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx2   x0xx2      float -1.197912 1.0599853     -89              id2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx3   x0xx3      float -1.478656 1.8801182     -89              id3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx4   x0xx4      float -2.399555 3.3071916     -89              id4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx5   x0xx5      float -2.933419 1.2198376     -89              id5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx6   x0xx6      float -1.129099 0.7540081     -89              id6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx1a x0xx1a      float -3.582562 1.3381874     -89 id1 assay double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx2a x0xx2a      float -2.395823 2.1199705     -89 id2 assay double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx3a x0xx3a      float -2.957312 3.7602365     -89 id3 assay double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx4a x0xx4a      float -4.799111 6.6143833     -89 id4 assay double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx5a x0xx5a      float -5.866838 2.4396752     -89 id5 assay double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx6a x0xx6a      float -2.258198 1.5080161     -89 id6 assay double</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        analyte_id analyte_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx1         id1            a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx2         id2            b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx3         id3            c</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx4         id4            d</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx5         id5            e</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx6         id6            f</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx1a        id1            a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx2a        id2            b</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx3a        id3            c</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx4a        id4            d</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx5a        id5            e</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> x0xx6a        id6            f</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Get the variable grouping</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="TDF.html">groups</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></span>
