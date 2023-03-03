@@ -1,0 +1,387 @@
+---
+title: "Import and reformatting of CHRIS Somalogic SomaScan data"
+author: "Johannes Rainer"
+graphics: yes
+output:
+  BiocStyle::html_document:
+    toc_float: true
+bibliography: references.bib
+---
+
+```{r  biocstyle, echo = FALSE, results = "asis" }
+library(BiocStyle)
+BiocStyle::markdown()
+```
+
+**Compiled**: `r date()`
+
+# Import and processing of Somalogic SomaScan data
+
+## Background
+
+Somalogic assays base on protein-capture Slow Offrate Modified Aptamer (SOMAmer)
+reagents [@candia_assessment_2017]. SOMAmer reagents are designed against a
+variety of human proteins. For serum and plasma samples, SOMAmer reagents are
+binned into 3 separate groups according to the expected endogenous abundance of
+each cognate protein (each SOMAmer thus exists only in one of the 3
+dilutions). Serum and plasma samples (including controls) are then diluted into
+3 concentrations. The diluted samples are then incubated with the
+dilution-specific SOMAmers. A typical SOMAscan plate will include buffer wells
+(no sample added), quality control (QC_SOMAscan) and calibrator samples specific
+for the used sample matrix (plasma or serum). The calibrator sample (5-7
+replicates per plate) consists of a common pooled sample used across all plates
+with the purpose to reduce between plate differences.
+
+
+## Normalization
+
+Raw data obtained from slide-based hybridization microarrays exhibit intraplate
+variances (differences in loading volume, leaks, washing conditions) as well as
+batch effects across plates. Somalogic defines different normalization steps
+addressing all these variances. Descriptions for this methods are extracted from
+the Somalogic technical documentation and from [@candia_assessment_2017].
+
+- Hybridization Control Normalization (*HybNorm*): remove systematic
+  (hybridization) biases of individual wells. It is performed using a set of 12
+  hybridization control elution (HCE) spike-ins that are added to each
+  sample. The measured Relative Fluorescence Intensities/Units (RFU)s of these
+  are compared against a reference which is determined by the median of such
+  spike-ins across the plate [@candia_assessment_2017]. Each sample is
+  normalized with a single scale factor (median ratio between the observed and
+  the reference RFU values of the HCE).
+
+- Intraplate Median Signal Normalization (*medNormInt*): aims to remove any
+  variances related to overall protein concentration, pipetting variation,
+  differences in concentrations and other variances within a single
+  plate. Normalization is performed separately for each dilution set and wells
+  of the same sample class (i.e. QC type, calibrator, biological sample). A
+  detailed description of the method is given in
+  [@candia_assessment_2017]. According to the *Somalogic SomaScan Data Standard
+  Tech Note* this is only performed on calibrator samples.
+
+- Plate scaling and calibration (*plateScale*): between plate (array)
+  differences are adjusted using a number of replicate measurements of a common
+  pooled calibrator sample which has to be the same across plates and which has
+  to be consistent with the assay sample type of a study. A unique scale factor
+  is defined for each SOMAmer binding reagent. The median of these is then
+  computed (within the plate?) and applied to all measurements in that plate
+  (plate scaling). The scale factors are subsequently recalculated for each
+  SOMAmer and applied to all measurements within the set of samples in that
+  plate.
+
+- Median signal normalization to a reference: is performed for each sample. The
+  scale factor for a set of SOMAmer reagents is computed against a reference
+  value generated from a cohort of healthy normal individuals and then
+  aggregated within a dilution. The median of each dilution's scale factors is
+  then applied to the respective SOMAmer reagents.
+
+## R packages
+
+There was a `readat` Bioconductor package that however is no longer available on
+Bioconductor. It however can be installed from github (*graumannlab/readat*).
+
+Alternatively, there is the `SomaDataIO` package (github:
+*SomaLogic/SomaDataIO*) that can be used for data import.
+
+
+## Data import
+
+We next read the data to evaluate how the data is represented.
+
+```{r}
+library(SomaDataIO)
+```
+
+Different files (assuming for different stages of normalization) are available:
+
+```{r}
+path <- "/home/jo/data/CHRIS/proteomics-somalogic/"
+fls <- dir(path, pattern = "adat", full.names = TRUE)
+basename(fls)
+```
+
+We load the most processed data file (`r basename(fls)[8]`) since that is also
+the one suggested to be used according to the [Somalogica Quality
+Statement](SS-2231571_SQD.pdf).
+
+```{r}
+dta <- read_adat(fls[8L])
+```
+
+Feature (i.e. SOMAmer) annotations (column data) can be extracted with
+`getAnalyteInfo`.
+
+```{r}
+anlts <- getAnalyteInfo(dta) |> as.data.frame()
+head(anlts)
+nrow(anlts)
+```
+
+This information includes also normalization factors and quality assessments
+performed for individual SOMAmers. Maybe interesting might be the `"ColCheck"`
+column that provides information on the quality of the specific SOMAmer:
+
+```{r}
+table(anlts[, "ColCheck"])
+```
+
+There are quite some features that did not pass the QC. According to Somalogic
+*Flagged SOMAmer reagents are typically retained for analyses since accuracy
+across all assay runs is a robust quality metric but is not a requirement for
+identification of meaningful biological signal.* Thus, we will keep all these
+features but they might be treated with care in the final interpretation of
+results.
+
+Note that there are different `"Type"` of SOMAmers that are also measured in
+different dilutions.
+
+```{r}
+table(anlts[, "Type"])
+```
+
+We might want to exclude the `"Hybridization Control Elution"` features from the
+*final* data set for actual data analysis (but keep them in the full data set
+for QC).
+
+The rest seems to be one huge `data.frame`/`tibble`: each row being one sample,
+with columns being annotations, metadata information or aptamer.
+
+```{r}
+rfu <- dta[, anlts$AptName]
+all(vapply(rfu, is.numeric, logical(1)))
+```
+
+Check the distribution of mean RFU per SOMAmer.
+
+```{r}
+boxplot(log2(vapply(rfu, mean, numeric(1))),
+        ylab = expression(log[2]~RFU))
+```
+
+Checking the available annotation for samples.
+
+```{r}
+row_ann <- dta[, !(colnames(dta) %in% anlts$AptName)] |> as.data.frame()
+head(row_ann)
+```
+
+The `"RowCheck"` column provides information whether the row (sample) passed the
+quality criteria:
+
+```{r}
+table(row_ann$RowCheck)
+```
+
+These samples should be excluded from statistical data analysis. We will remove
+them from the *final* data set but keep all samples for the full data set for
+quality assessment.
+
+
+## Map IDs to AIDs
+
+We need to map the provided IDs from Somalogic to the AIDs from CHRIS.
+
+```{r}
+map <- read.table(file.path(path, "mapping.txt"), sep = "\t", header = TRUE,
+                  colClasses = c("character", "character"))
+idx <- match(map$sample_ID, row_ann$Barcode2d)
+
+row_ann$aid <- NA_character_
+row_ann$aid[idx] <- map[, "AID"]
+row_ann$SampleType[which(row_ann$aid == "POOL")] <- "QC_CHRIS"
+
+stopifnot(all(row_ann$Barcode2d[idx] == map[, "sample_ID"]))
+```
+
+The table below lists the total numbers for the different sample types (before
+excluding flagged samples).
+
+```{r}
+table(row_ann[, "SampleType"])
+```
+
+
+# Calculate quality metrics for measurements
+
+We next calculate coefficients of variation (CV) and levels of detection (LOD)
+for each SOMAmer in the data set. These are calculated on the subset of samples
+that passed the Somalogic quality assessment.
+
+```{r}
+data_qc <- as.data.frame(dta)
+stopifnot(all.equal(rownames(data_qc), rownames(row_ann)))
+data_qc$aid <- row_ann$aid
+data_qc$SampleType <- row_ann$SampleType
+data_qc <- data_qc[data_qc$RowCheck == "PASS", ]
+```
+
+At first we calculate the CV using Somalogic or CHRIS Pool QC samples.
+
+```{r}
+rsd <- function(x, na.rm = TRUE) {
+    sd(x, na.rm = na.rm) / abs(mean(x, na.rm = na.rm))
+}
+## QC
+cv_qc <- vapply(data_qc[data_qc$SampleType == "QC", anlts$AptName],
+                rsd, numeric(1))
+cv_qc_chris <- vapply(data_qc[data_qc$SampleType == "QC_CHRIS", anlts$AptName],
+                      rsd, numeric(1))
+```
+
+In addition we calculate the dispersion ratio (D-ratio) that represents the
+ratio between the biological and technical variance
+[@broadhurstGuidelinesConsiderationsUse2018]. For an estimate of the technical
+variance we use the standard deviation in QC CHRIS Pool samples and the data is
+first log transformed as suggested in
+[@broadhurstGuidelinesConsiderationsUse2018].
+
+```{r}
+fun <- function(z) {
+    sd(log2(z), na.rm = TRUE)
+}
+dratio <-
+    vapply(data_qc[data_qc$SampleType == "QC_CHRIS", anlts$AptName],
+           fun, numeric(1)) /
+    vapply(data_qc[data_qc$SampleType == "Sample", anlts$AptName],
+           fun, numeric(1))
+```
+
+We next calculate also the level of detection (LOD) for each SOMAmer using the
+method proposed by Candia et al. [@candia_assessment_2022].
+
+```{r}
+elod <- function(x) {
+    median(x, na.rm = TRUE) + 5 * mad(x, na.rm = TRUE)
+}
+elods <- vapply(data_qc[data_qc$SampleType == "Buffer", anlts$AptName],
+                elod, numeric(1))
+```
+
+At last we add these quality information to the data.
+
+```{r}
+anlts$cv_qc <- cv_qc
+anlts$cv_qc_chris <- cv_qc_chris
+anlts$Dratio <- dratio
+anlts$eLOD <- elods
+```
+
+
+# Export data in TDFF(ormat)
+
+The CHRIS Somalogic data set will be exported as two different *modules*, one
+with only the (good quality) data for CHRIS participants and one including also
+all calibrator features and all QC and calibrator samples. The latter will be
+used for quality assessment, the former for actual data analyses.
+
+```{r}
+library(tidyfr)
+```
+
+First we create the *full* data set with all available data. We need also to
+encode the variables with the coding scheme used in CHRIS.
+
+```{r}
+data <- as.data.frame(dta)
+stopifnot(all.equal(rownames(data), rownames(row_ann)))
+## Convert some variables to factors.
+data$PlateId <- factor(data$PlateId)
+data$ScannerID <- factor(data$ScannerID)
+data$SlideId <- factor(data$SlideId)
+data$SampleType <- row_ann$SampleType
+data_cn <- colnames(data)
+sid <- data$SampleId
+
+colnames(data) <- sprintf("x0so%04d", seq_len(ncol(data)))
+## Add AIDs
+data$aid <- row_ann$aid
+nas <- is.na(data$aid)
+data$aid[nas] <- sid[nas]
+data <- data[, union("aid", colnames(data))]
+```
+
+Next we define the *labels*.
+
+```{r}
+lbls <- labels_from_data(data)
+lbls$description <- data_cn
+lbls$long_description <- data_cn
+```
+
+Add annotation to the individual labels (for SOMAmers). We only add selected
+annotations and not all calibration values etc to the data.
+
+```{r}
+ann_cn <- c("AptName", "SeqId", "SeqIdVersion", "SomaId", "TargetFullName",
+            "Target", "UniProt", "EntrezGeneID", "EntrezGeneSymbol",
+            "Organism", "Units", "Type", "Dilution", "ColCheck",
+            "cv_qc", "cv_qc_chris", "Dratio", "eLOD")
+
+rownames(anlts) <- anlts$AptName
+lbls <- cbind(lbls, anlts[lbls$description, ann_cn])
+lbls$long_description <- anlts[lbls$description, "TargetFullName"]
+lbls[is.na(lbls$long_description), "long_description"] <-
+    lbls$description[is.na(lbls$long_description)]
+```
+
+Next we define *groups*, i.e. variables that can be grouped into the same
+entity.
+
+```{r}
+grps <- data.frame(group = "metadata", label = lbls$label)
+grps[grep("^seq", lbls$description), "group"] <- "protein_abundance"
+
+grplbls <- data.frame(group = c("metadata", "protein_abundance"),
+                      description = c("Sample and plate information",
+                                      "Protein abundance (expressed as RFU)"))
+
+```
+
+Next we export the full data set.
+
+```{r}
+export_tdf(
+    name = "chris_somalogic_full",
+    description = paste0("CHRIS Somalogic SomaScan-based plasma proteomics ",
+                         "data; full data including quality controls and ",
+                         "calibrator samples"),
+    version = "1.0.3.0", date = "2023-03-03",
+    data = data, groups = grps, grp_labels = grplbls, labels = lbls)
+```
+
+Next we subset the data to CHRIS study samples (excluding QC CHRIS Pool) and
+samples that were passing the Somalogic quality control. In addition we remove
+all non-human proteins from the data set.
+
+```{r}
+rem <- anlts$AptName[!anlts$Organism %in% c("Human")]
+lbls <- lbls[!lbls$description %in% rem, ]
+data <- data[, c("aid", lbls$label)]
+grps <- grps[grps$label %in% lbls$label, ]
+
+## Remove QC control samples and QC CHRIS Pool samples.
+data <- data[grep("^001", data$aid), ]
+
+## Remove samples not passing QC.
+data <- data[data$x0so0027 == "PASS", ]
+```
+
+And finally exporting the data.
+
+```{r}
+export_tdf(
+    name = "chris_somalogic",
+    description = paste0("CHRIS Somalogic SomaScan-based plasma proteomics ",
+                         "data; CHRIS study samples passing Somalogic QC."),
+    version = "1.0.3.0", date = "2023-03-03",
+    data = data, groups = grps, grp_labels = grplbls, labels = lbls)
+```
+
+
+# Session information
+
+```{r}
+sessionInfo()
+```
+
+# References
