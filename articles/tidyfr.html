@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">tidyfr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.99.11</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (links[i].hostname != window.location.hostname)
       links[i].target = '_blank';
 });
-</script><p><strong>Authors</strong>: Johannes Rainer [cre] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>)<br><strong>Last modified:</strong> 2023-03-01 13:33:22.369317<br><strong>Compiled</strong>: Wed Mar 1 13:44:50 2023</p>
+</script><p><strong>Authors</strong>: Johannes Rainer [cre] (<a href="https://orcid.org/0000-0002-6977-7147" class="external-link uri">https://orcid.org/0000-0002-6977-7147</a>)<br><strong>Last modified:</strong> 2023-03-03 09:05:10.429295<br><strong>Compiled</strong>: Fri Mar 3 09:10:43 2023</p>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -156,19 +156,24 @@ functions.</p>
 <code>data.frame</code> and ensures that the data is correctly formatted
 (i.e. categorical variables are represented as factors, with the right
 categories, dates are formatted correctly and missing values are
-represented by <code>NA</code>).</p>
+represented by <code>NA</code>). The AIDs (identifiers of the samples)
+provided by the data module are used as row names of the
+<code>data.frame</code> (if these AIDs are not unique, i.e., some AIDs
+are duplicated, AIDs are <strong>not</strong> used as row names but
+provided in an additional column <code>"aid"</code> in the returned
+<code>data.frame</code>).</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TDF.html">data</a></span><span class="op">(</span><span class="va">mdl</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/DataModule.html">data</a></span><span class="op">(</span><span class="va">mdl</span><span class="op">)</span></span>
 <span><span class="va">d</span></span></code></pre></div>
-<pre><code><span><span class="co">##          aid x0_sex   x0_age x0_ager  x0_birthd         x0_birthpc x0_residpc</span></span>
-<span><span class="co">## 1 0010100001 Female 19.61465      20 1983-01-04 Vinschgau district       MALS</span></span>
-<span><span class="co">## 2 0010200002   Male 54.44558      54 1956-03-08 Vinschgau district     LATSCH</span></span>
-<span><span class="co">##     x0_examd x0_workf   x0_note  x0_notesaliva x0_noteint x0_noteself</span></span>
-<span><span class="co">## 1 2016-01-02        G something something else       &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">## 2 2012-02-01        E      &lt;NA&gt;           &lt;NA&gt;       &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">##   x0_notespiro x0_birthm x0_birthy x0_examm x0_examy</span></span>
-<span><span class="co">## 1         &lt;NA&gt;         2      1983        2     2016</span></span>
-<span><span class="co">## 2         &lt;NA&gt;         3      1956        1     2012</span></span></code></pre>
+<pre><code><span><span class="co">##            x0_sex   x0_age x0_ager  x0_birthd         x0_birthpc x0_residpc</span></span>
+<span><span class="co">## 0010100001 Female 19.61465      20 1983-01-04 Vinschgau district       MALS</span></span>
+<span><span class="co">## 0010200002   Male 54.44558      54 1956-03-08 Vinschgau district     LATSCH</span></span>
+<span><span class="co">##              x0_examd x0_workf   x0_note  x0_notesaliva x0_noteint x0_noteself</span></span>
+<span><span class="co">## 0010100001 2016-01-02        G something something else       &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">## 0010200002 2012-02-01        E      &lt;NA&gt;           &lt;NA&gt;       &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">##            x0_notespiro x0_birthm x0_birthy x0_examm x0_examy</span></span>
+<span><span class="co">## 0010100001         &lt;NA&gt;         2      1983        2     2016</span></span>
+<span><span class="co">## 0010200002         &lt;NA&gt;         3      1956        1     2012</span></span></code></pre>
 <p>Categorical variables are correctly converted to factors:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d</span><span class="op">$</span><span class="va">x0_sex</span></span></code></pre></div>
@@ -299,7 +304,7 @@ the help for this function for more details.</p>
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] tidyfr_0.99.10   BiocStyle_2.27.1</span></span>
+<span><span class="co">## [1] tidyfr_0.99.11   BiocStyle_2.27.1</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##  [1] Matrix_1.5-3                jsonlite_1.8.4             </span></span>
