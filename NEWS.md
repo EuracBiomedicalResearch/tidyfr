@@ -1,5 +1,10 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.13
+
+- Add script to create the p180 metabolomics TDFF module.
+- Add Rmd describing usage of the CHRIS p180 metabolomics module.
+
 ## Changes in 0.99.12
 
 - Add script to create the CHRIS Somalogic TDFF module.

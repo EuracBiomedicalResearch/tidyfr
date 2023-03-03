@@ -1,0 +1,142 @@
+# Export the Biocrates Metabolomics data
+
+Here we export the Biocrates-based targeted metabolomics data from CHRIS (and
+NAFLD) in the new Textual Dataset Format (TDF) using the `tidyfr` package.
+
+```{r}
+library(tidyfr)
+library(biochristes7500)
+
+data("biochristes7500")
+```
+
+Extract the *data*, *labels* and *groups* from the `SummarizedExperiment`.
+
+```{r}
+data <- data(biochristes7500, assayNames = c("concentrations", "flags"),
+             labelPrefix = "x0pt")
+
+data("qcs_fia")
+data("qcs_lcms")
+
+qc_types <- unique(qcs_fia$sample_name)
+cv_fia <- lapply("QC CHRIS Pool", function(z) {
+    rowRsd(concentrations(qcs_fia[, qcs_fia$sample_name == z],
+                          blessing = "none"))
+})
+cv_fia <- unlist(cv_fia)
+
+cv_lcms <- lapply("QC CHRIS Pool", function(z) {
+    rowRsd(concentrations(qcs_lcms[, qcs_lcms$sample_name == z],
+                          blessing = "none"))
+})
+cv_lcms <- unlist(cv_lcms)
+
+cvs <- rep(NA_real_, nrow(biochristes7500))
+cvs[match(names(cv_fia), rownames(rowData(biochristes7500)))] <- cv_fia
+cvs[match(names(cv_lcms), rownames(rowData(biochristes7500)))] <- cv_lcms
+
+rowData(biochristes7500)$cv_qc_chris <- cvs
+
+
+labels <- labels(
+    biochristes7500, assayNames = c("concentrations", "flags"),
+    labelPrefix = "x0pt")
+labels$long_description <- labels$biochemical_name
+labels$long_description[grep("flags$", labels$description)] <-
+    paste0(labels$long_description[grep("flags$", labels$description)],
+           " flags")
+
+groups <- groups(
+    biochristes7500, assayNames = c("concentrations", "flags"),
+    labelPrefix = "x0pt")
+```
+
+We next replace the integer-type flags with `factor`s to better encode the
+quality information.
+
+```{r}
+cats <- c(`0` = "OK", `-9` = "Removed because of technical reason",
+          `-1` = "Below lower level of quantification",
+          `1` = "Above upper level of quantification",
+          `-2` = "Below level of detection")
+idx <- grep("a$", colnames(data))
+for (i in idx)
+    data[, i] <- unname(factor(cats[as.character(data[, i])], levels = cats))
+```
+
+Fixing and adapting the *labels*.
+
+```{r}
+labels$type[labels$type == "integer"] <- "categorical"
+labels <- labels[, !colnames(labels) %in%
+                   c("analyte_lloq", "analyte_uloq", "analyte_lod",
+                     "analyte_blessed_min", "analyte_blessed_max")]
+```
+
+Adding a grouping for each concentration-quality pair.
+
+```{r}
+grp_labels <- data.frame(group = unique(groups$group),
+                         description = unique(groups$group))
+grp_labels$description <- sub("analyte_", "Values for ",
+                              grp_labels$description)
+grp_labels$description[1L] <- "Metabolite concentrations"
+grp_labels$description[2L] <- "Measurement quality information"
+```
+
+Exporting the data.
+
+```{r}
+meta <- metadata(biochristes7500)
+data_version <- meta$value[meta$name == "version"]
+data_date <- meta$value[meta$name == "data_date"]
+
+export_tdf(name = "metabolomics_p180",
+           description = "Targeted metabolomics data based on the Biocrates p180 kit comprising measured concentrations of 175 metabolites and lipids in serum samples of CHRIS participants.",
+           version = "1.0.1.0",
+           date = data_date,
+           path = "/home/jo/data/CHRIS/chris_baseline",
+           data = data, groups = groups, grp_labels = grp_labels,
+           labels = labels)
+```
+
+## Evaluating export
+
+Check that data is exported correctly.
+
+```{r}
+bp <- "/home/jo/data/CHRIS/chris_baseline"
+
+list_data_modules(bp)
+
+mdl <- data_module(name = "metabolomics_p180", version = "1.0.1.0", path = bp)
+mdl
+
+head(labels(mdl))
+head(groups(mdl))
+head(grp_labels(mdl))
+head(data)
+
+tmp <- data(mdl)
+
+mat <- as.matrix(t(tmp[, seq_len(nrow(biochristes7500)) + 1]))
+library(testthat)
+expect_equal(unname(mat), unname(assay(biochristes7500)))
+
+flags <- as.matrix(t(tmp[, seq_len(nrow(biochristes7500)) + 176]))
+flags[flags == "OK"] <- 0
+flags[flags == "Removed because of technical reason"] <- -9
+flags[flags == "Below lower level of quantification"] <- -1
+flags[flags == "Above upper level of quantification"] <- 1
+flags[flags == "Below level of detection"] <- -2
+flags <- apply(flags, c(1, 2), as.numeric)
+
+expect_equal(unname(flags), unname(assay(biochristes7500, "flags")))
+```
+
+# Session information
+
+```{r}
+sessionInfo()
+```
