@@ -1,5 +1,10 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.14
+
+- Add script to create the ScanningSWATH TDFF module.
+- Add Rmd describing usage of the ScanningSWATH TDFF module.
+
 ## Changes in 0.99.13
 
 - Add script to create the p180 metabolomics TDFF module.

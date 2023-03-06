@@ -1,0 +1,289 @@
+# Export the ScanningSWATH proteomics data in TDFF
+
+We're exporting the ScanningSWATH data from the `chrisProteomicsData` package to
+TDFF. The `SummarizedExperiments` of that package were created using the
+`extract_data.R` script that converted and reformatted the data text files
+provided by the facility from the Charite accordingly.
+
+```{r}
+library(chrisProteomicsData)
+library(tidyfr)
+```
+
+## Exporting the protein-level data
+
+Prepare the data. Add also some selected variables from the `colData`.
+
+```{r}
+data("chris_plasma_proteins")
+
+dta <- data(chris_plasma_proteins, assayNames = 1,
+            labelPrefix = "x0sw")
+dta$aid <- chris_plasma_proteins$AID
+
+cols <- c("File.Name", "Date", "Inst", "Inj", "Plate", "Sample.Name",
+          "container", "MS_Batch", "SP_Batch")
+cd <- as.data.frame(colData(chris_plasma_proteins)[, cols])
+cd$Inst <- factor(cd$Inst)
+cd$Plate <- factor(cd$Plate)
+cd$container <- factor(cd$container)
+cd$MS_Batch <- factor(cd$MS_Batch)
+cd$SP_Batch <- factor(cd$SP_Batch)
+colnames(cd) <- paste0("x0sw", seq(ncol(dta), length.out = length(cols)))
+
+dta <- cbind(dta, cd)
+
+## Remove QC samples
+dta_qc <- dta[dta$aid == "POOL", ]
+```
+
+Add and define the labels.
+
+```{r}
+lbls <- labels_from_data(dta)
+lbls$description <- c(rowData(chris_plasma_proteins)$Protein.Group, cols)
+lbls$long_description <- c(
+    rowData(chris_plasma_proteins)$First.Protein.Description, cols)
+
+## Add additional info.
+rcols <- c("PeptideNN", "PeptideNames", "Protein.Ids", "Protein.Names", "Genes",
+           "Modified.Sequence", "Stripped.Sequence", "Precursor.Id")
+rd <- as.data.frame(rowData(chris_plasma_proteins)[, rcols])
+dummy <- data.frame(matrix(ncol = ncol(rd), nrow = length(cols)))
+colnames(dummy) <- colnames(rd)
+rd <- rbind(rd, dummy)
+lbls <- cbind(lbls, rd)
+
+library(CompMetaboTools)
+## Add also CV.
+cvs <- lapply(dta_qc[, seq(2, length.out = nrow(chris_plasma_proteins))],
+              function(z) {
+                  rsd(2^z)
+              })
+cvs <- unlist(cvs)
+lbls$cv_qc_chris <- c(cvs, rep(NA_real_, length(cols)))
+```
+
+Define also label groups for protein abundances and general metadata.
+
+```{r}
+grps <- data.frame(group = "metadata", label = lbls$label)
+grps[seq_len(nrow(chris_plasma_proteins)), "group"] <- "protein_abundance"
+grplbls <- data.frame(group = c("metadata", "protein_abundance"),
+                      description = c("Sample and plate information",
+                                      "Protein abundance (log2 scale)"))
+```
+
+Next we export the full data set.
+
+```{r}
+export_tdf(
+    name = "chris_scanningswath_proteins_full",
+    description = paste0("CHRIS ScanningSWATH-based plasma proteomics ",
+                         "data; full data set including QC samples."),
+    version = "1.0.0.0", date = "2022-02-14",
+    data = dta, groups = grps, grp_labels = grplbls, labels = lbls)
+```
+
+Also exporting the data without the QC samples.
+
+```{r}
+dta <- dta[dta$aid != "POOL", ]
+export_tdf(
+    name = "chris_scanningswath_proteins",
+    description = paste0("CHRIS ScanningSWATH-based plasma proteomics ",
+                         "data."),
+    version = "1.0.0.0", date = "2022-02-14",
+    data = dta, groups = grps, grp_labels = grplbls, labels = lbls)
+```
+
+Check that the data is correct.
+
+```{r}
+mdl <- data_module("chris_scanningswath_proteins", "1.0.0.0", ".")
+
+tidyfr:::.valid_data_directory("chris_scanningswath_proteins/1.0.0.0/data")
+tidyfr:::.valid_data_directory("chris_scanningswath_proteins_full/1.0.0.0/data")
+
+## Are CVs correct?
+cvs <- rowRsd(
+    2^assay(chris_plasma_proteins)[, chris_plasma_proteins$sampleOR == "POOL"]
+)
+cvs2 <- labels(mdl)$cv_qc_chris
+names(cvs2) <- labels(mdl)$description
+stopifnot(all.equal(cvs, cvs2[names(cvs)]))
+```
+
+## Exporting the peptide-level data
+
+Prepare the data. Add also some selected variables from the `colData`.
+
+```{r}
+data("chris_plasma_proteomics")
+chris_plasma_peptides <- chris_plasma_proteomics[["peptides"]]
+
+dta <- data(chris_plasma_peptides, assayNames = 1,
+            labelPrefix = "x0swx")
+dta$aid <- chris_plasma_peptides$AID
+
+cols <- c("File.Name", "Date", "Inst", "Inj", "Plate", "Sample.Name",
+          "container", "MS_Batch", "SP_Batch")
+cd <- as.data.frame(colData(chris_plasma_peptides)[, cols])
+cd$Inst <- factor(cd$Inst)
+cd$Plate <- factor(cd$Plate)
+cd$container <- factor(cd$container)
+cd$MS_Batch <- factor(cd$MS_Batch)
+cd$SP_Batch <- factor(cd$SP_Batch)
+colnames(cd) <- paste0("x0swx", seq(ncol(dta), length.out = length(cols)))
+
+dta <- cbind(dta, cd)
+
+## Remove QC samples
+dta_qc <- dta[dta$aid == "POOL", ]
+```
+
+Add and define the labels.
+
+```{r}
+lbls <- labels_from_data(dta)
+lbls$description <- c(rownames(rowData(chris_plasma_peptides)), cols)
+lbls$long_description <- c(
+    rowData(chris_plasma_peptides)$First.Protein.Description, cols)
+
+## Add additional info.
+rcols <- c("Protein.Group", "Protein.Ids", "Protein.Names", "Genes",
+           "Modified.Sequence", "Stripped.Sequence", "Precursor.Id")
+rd <- as.data.frame(rowData(chris_plasma_peptides)[, rcols])
+dummy <- data.frame(matrix(ncol = ncol(rd), nrow = length(cols)))
+colnames(dummy) <- colnames(rd)
+rd <- rbind(rd, dummy)
+lbls <- cbind(lbls, rd)
+
+library(CompMetaboTools)
+## Add also CV.
+cvs <- lapply(dta_qc[, seq(2, length.out = nrow(chris_plasma_peptides))],
+              function(z) {
+                  rsd(2^z)
+              })
+cvs <- unlist(cvs)
+lbls$cv_qc_chris <- c(cvs, rep(NA_real_, length(cols)))
+```
+
+Define also label groups for protein abundances and general metadata.
+
+```{r}
+grps <- data.frame(group = "metadata", label = lbls$label)
+grps[seq_len(nrow(chris_plasma_peptides)), "group"] <- "peptide_abundance"
+grplbls <- data.frame(group = c("metadata", "peptide_abundance"),
+                      description = c("Sample and plate information",
+                                      "Peptide abundance (log2 scale)"))
+```
+
+Next we export the full data set.
+
+```{r}
+export_tdf(
+    name = "chris_scanningswath_peptides_full",
+    description = paste0("CHRIS ScanningSWATH-based peptide-level plasma ",
+                         "proteomics data; full data set including QC ",
+                         "samples."),
+    version = "1.0.0.0", date = "2022-02-14",
+    data = dta, groups = grps, grp_labels = grplbls, labels = lbls)
+```
+
+Also exporting the data without the QC samples.
+
+```{r}
+dta <- dta[dta$aid != "POOL", ]
+export_tdf(
+    name = "chris_scanningswath_peptides",
+    description = paste0("CHRIS ScanningSWATH-based peptide-lelvel plasma ",
+                         "proteomics data."),
+    version = "1.0.0.0", date = "2022-02-14",
+    data = dta, groups = grps, grp_labels = grplbls, labels = lbls)
+```
+
+Check that the data is correct.
+
+```{r}
+mdl <- data_module("chris_scanningswath_peptides", "1.0.0.0", ".")
+
+tidyfr:::.valid_data_directory("chris_scanningswath_peptides/1.0.0.0/data")
+tidyfr:::.valid_data_directory("chris_scanningswath_peptides_full/1.0.0.0/data")
+
+## Are CVs correct?
+cvs <- rowRsd(
+    2^assay(chris_plasma_peptides)[, chris_plasma_peptides$sampleOR == "POOL"]
+)
+cvs2 <- labels(mdl)$cv_qc_chris
+names(cvs2) <- labels(mdl)$description
+stopifnot(all.equal(cvs, cvs2[names(cvs)]))
+```
+
+## Comparing data with R packages
+
+### Protein data
+
+```{r}
+mdl <- data_module("chris_scanningswath_proteins", "1.0.0.0", ".")
+pdata <- data(mdl)
+rownames(pdata) <- pdata$aid
+pdata <- pdata[, colnames(pdata) != "aid"]
+colnames(pdata) <- labels(mdl)$description
+mat <- pdata[, groups(mdl)[, "group"] == "protein_abundance"]
+mat <- t(as.matrix(mat))
+
+ref <- assay(chris_plasma_proteins)
+colnames(ref) <- chris_plasma_proteins$AID
+ref <- ref[, colnames(ref) != "POOL"]
+
+library(testthat)
+expect_equal(unname(mat), unname(ref))
+```
+
+
+### Peptide data
+
+```{r}
+mdl <- data_module("chris_scanningswath_peptides", "1.0.0.0", ".")
+pdata <- data(mdl)
+rownames(pdata) <- pdata$aid
+pdata <- pdata[, colnames(pdata) != "aid"]
+colnames(pdata) <- labels(mdl)$description
+mat <- pdata[, groups(mdl)[, "group"] == "peptide_abundance"]
+mat <- t(as.matrix(mat))
+
+ref <- assay(chris_plasma_peptides)
+colnames(ref) <- chris_plasma_proteins$AID
+ref <- ref[, colnames(ref) != "POOL"]
+
+expect_equal(unname(mat), unname(ref))
+```
+
+
+## Check that none of the package contains removed participants
+
+```{r}
+rem <- readLines("/home/jo/data/CHRIS/exclude_set/2022-11-15.txt")
+rem <- c(rem, readLines("/home/jo/data/CHRIS/exclude_set/2023-01-17.txt"))
+rem <- c(rem, readLines("/home/jo/data/CHRIS/exclude_set/excluded_participants.txt"))
+rem <- rem[-grep("^#", rem)]
+```
+
+```{r}
+mdl <- data_module("chris_scanningswath_proteins", "1.0.0.1", ".")
+dta <- data(mdl)
+expect_true(!any(dta$aid %in% rem))
+
+mdl <- data_module("chris_scanningswath_proteins_full", "1.0.0.1", ".")
+dta <- data(mdl)
+expect_true(!any(dta$aid %in% rem))
+
+mdl <- data_module("chris_scanningswath_peptides", "1.0.0.1", ".")
+dta <- data(mdl)
+expect_true(!any(dta$aid %in% rem))
+
+mdl <- data_module("chris_scanningswath_peptides_full", "1.0.0.1", ".")
+dta <- data(mdl)
+expect_true(!any(dta$aid %in% rem))
+```
