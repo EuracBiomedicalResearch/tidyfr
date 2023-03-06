@@ -205,7 +205,18 @@ nas <- vapply(somamer, function(z) {
 }, integer(1))
 ```
 
-In total only `r sum(nas > 0)` measurements are below the eLOD.
+For in total `r sum(nas > 0)` of the `r length(nas)` at least one reported value
+is below the eLOD of that SOMAmer. We can also calculate the percentage of
+values below eLOD for each SOMAmer.
+
+```{r}
+perc_abs <- nas / sum(soma_data$SampleType == "Sample") * 100
+```
+
+In total `r sum(perc_abs > 50)` SOMAmers have more than 50% of the reported
+values below their eLOD. Depending on the analysis performed, these might need
+to be removed from the data analysis.
+
 
 # Session information
 
