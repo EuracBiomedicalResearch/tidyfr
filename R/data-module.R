@@ -217,6 +217,13 @@ setMethod("groups", "DataModule", function(object) {
     .groups(modulePath(object))
 })
 
+#' @exportS3Method tidyfr::groups
+groups.DataModule <- function(object){
+  validObject(object)
+  .groups(modulePath(object))
+  
+}
+
 #' @rdname DataModule
 #'
 #' @export
