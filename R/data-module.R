@@ -209,19 +209,15 @@ setMethod("labels", "DataModule", function(object) {
     .labels(modulePath(object))
 })
 
-#' @rdname DataModule
-#'
-#' @export
-setMethod("groups", "DataModule", function(object) {
-    validObject(object)
-    .groups(modulePath(object))
-})
 
+#' @rdname DataModule
+groups <- function(object, ...) UseMethod("groups")
+
+#' @rdname DataModule
 #' @exportS3Method tidyfr::groups
-groups.DataModule <- function(object){
+groups.DataModule <- function(object, ...){
   validObject(object)
   .groups(modulePath(object))
-  
 }
 
 #' @rdname DataModule

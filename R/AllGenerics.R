@@ -1,7 +1,5 @@
 setGeneric("labels", function(object, ...)
     standardGeneric("labels"))
-setGeneric("groups", function(object, ...)
-    standardGeneric("groups"))
 
 #' @title Textual Dataset Format
 #'

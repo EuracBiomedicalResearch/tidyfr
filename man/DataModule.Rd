@@ -8,7 +8,8 @@
 \alias{data_module}
 \alias{grp_labels}
 \alias{labels,DataModule-method}
-\alias{groups,DataModule-method}
+\alias{groups}
+\alias{groups.DataModule}
 \alias{moduleName}
 \alias{modulePath}
 \alias{moduleVersion}
@@ -24,7 +25,9 @@ grp_labels(object)
 
 \S4method{labels}{DataModule}(object)
 
-\S4method{groups}{DataModule}(object)
+groups(object, ...)
+
+groups.DataModule(object, ...)
 
 moduleName(object)
 
