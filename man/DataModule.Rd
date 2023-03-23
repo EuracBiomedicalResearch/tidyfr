@@ -25,9 +25,9 @@ grp_labels(object)
 
 \S4method{labels}{DataModule}(object)
 
-groups(object, ...)
+groups(x, ...)
 
-groups.DataModule(object, ...)
+\method{groups}{DataModule}(x, ...)
 
 moduleName(object)
 
@@ -56,6 +56,8 @@ module to load.}
 modules are stored.}
 
 \item{object}{A \code{DataModule} object.}
+
+\item{x}{A \code{DataModule} object.}
 
 \item{base}{For \code{modulePath}: \code{logical(1)} whether the base folder or the
 actual data folder should be returned. The \emph{base} folder (returned with

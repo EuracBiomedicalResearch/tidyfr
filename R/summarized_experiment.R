@@ -170,14 +170,13 @@ NULL
 NULL
 
 #' @rdname chris-SummarizedExperiment
-#'
-#' @export
-setMethod("groups", "SummarizedExperiment",
-          function(object, assayNames. = assayNames(object),
-                   labelPrefix = "x0xx") {
-              .groups_from_SummarizedExperiment(
-                  object, assayNames. = assayNames., labelPrefix = labelPrefix)
-          })
+#' 
+#' @exportS3Method tidyfr::groups SummarizedExperiment
+groups.SummarizedExperiment <- function(x, assayNames. = assayNames(object),
+                                        labelPrefix = "x0xx", ...){
+  .groups_from_SummarizedExperiment(
+    x, assayNames. = assayNames., labelPrefix = labelPrefix)
+}
 
 #' @rdname chris-SummarizedExperiment
 #'
