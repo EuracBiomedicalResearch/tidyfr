@@ -8,7 +8,12 @@ Description: The tidyfr package provides import and export functionality for the
 Authors@R: c(person(given = "Johannes", family = "Rainer",
                     email = "Johannes.Rainer@eurac.edu",
                     role = "cre",
-                    comment = c(ORCID = "0000-0002-6977-7147")))
+                    comment = c(ORCID = "0000-0002-6977-7147")),
+             person(given = "Michele", family = "Filosi",
+             email = "michele.filosi@gmail.com",
+             role = "aut",
+             comment = c(ORCID="0000-0002-3872-347X")
+             ))
 Depends:
     R (>= 4.1.0)
 Imports:
