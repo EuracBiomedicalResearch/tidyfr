@@ -40,7 +40,7 @@ moduleDescription(object)
 moduleDate(object)
 }
 \arguments{
-\item{...}{For \code{data}: additional arguments.}
+\item{...}{Further arguments passed to downstream \code{groups} method}
 
 \item{aidAsRownames}{optional parameter for \code{data}: if \code{TRUE} (the default)
 the AIDs provided by the data module are used as row names of the

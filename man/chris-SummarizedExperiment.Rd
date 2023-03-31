@@ -7,16 +7,20 @@
 \alias{groups.SummarizedExperiment}
 \title{Extracting TDF-compliant data from a SummarizedExperiment}
 \usage{
-\method{groups}{SummarizedExperiment}(x, assayNames. = assayNames(object), labelPrefix = "x0xx", ...)
+\method{groups}{SummarizedExperiment}(x, assayNames. = assayNames(x), labelPrefix = "x0xx", ...)
 
 \S4method{labels}{SummarizedExperiment}(object, assayNames. = assayNames(object), labelPrefix = "x0xx")
 }
 \arguments{
+\item{x}{a \code{SummarizedExperiment} object}
+
 \item{assayNames.}{\code{character} defining the names of the \emph{assays} in
 \code{object} from which data should be extracted.}
 
 \item{labelPrefix}{\code{character(1)} defining the prefix for the variable IDs
 (labels) of the object.}
+
+\item{...}{Further arguments passed to downstream \code{groups} method}
 
 \item{object}{A \code{SummarizedExperiment} object.}
 }

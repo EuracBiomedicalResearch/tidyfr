@@ -3,7 +3,7 @@ setGeneric("labels", function(object, ...)
 
 #' @title Textual Dataset Format
 #'
-#' @aliases labels groups
+#' @aliases labels
 #'
 #' @description
 #'

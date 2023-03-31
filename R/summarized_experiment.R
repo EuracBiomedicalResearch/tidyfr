@@ -170,9 +170,10 @@ NULL
 NULL
 
 #' @rdname chris-SummarizedExperiment
-#' 
+#' @param x a `SummarizedExperiment` object
+#' @param ... Further arguments passed to downstream `groups` method
 #' @exportS3Method tidyfr::groups SummarizedExperiment
-groups.SummarizedExperiment <- function(x, assayNames. = assayNames(object),
+groups.SummarizedExperiment <- function(x, assayNames. = assayNames(x),
                                         labelPrefix = "x0xx", ...){
   .groups_from_SummarizedExperiment(
     x, assayNames. = assayNames., labelPrefix = labelPrefix)

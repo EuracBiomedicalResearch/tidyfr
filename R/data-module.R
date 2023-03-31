@@ -212,6 +212,7 @@ setMethod("labels", "DataModule", function(object) {
 
 #' @rdname DataModule
 #' @param x A `DataModule` object.
+#' @param ... Further arguments passed to downstream `groups` method
 #' @export groups
 groups <- function(x, ...) UseMethod("groups")
 
