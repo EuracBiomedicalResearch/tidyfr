@@ -3,7 +3,6 @@
 \name{TDF}
 \alias{TDF}
 \alias{labels}
-\alias{groups}
 \title{Textual Dataset Format}
 \description{
 The \code{tidyfr} package provides convenience and utility functions to import

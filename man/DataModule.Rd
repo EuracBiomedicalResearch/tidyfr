@@ -8,7 +8,8 @@
 \alias{data_module}
 \alias{grp_labels}
 \alias{labels,DataModule-method}
-\alias{groups,DataModule-method}
+\alias{groups}
+\alias{groups.DataModule}
 \alias{moduleName}
 \alias{modulePath}
 \alias{moduleVersion}
@@ -24,7 +25,9 @@ grp_labels(object)
 
 \S4method{labels}{DataModule}(object)
 
-\S4method{groups}{DataModule}(object)
+groups(x, ...)
+
+\method{groups}{DataModule}(x, ...)
 
 moduleName(object)
 
@@ -37,7 +40,7 @@ moduleDescription(object)
 moduleDate(object)
 }
 \arguments{
-\item{...}{For \code{data}: additional arguments.}
+\item{...}{Further arguments passed to downstream \code{groups} method}
 
 \item{aidAsRownames}{optional parameter for \code{data}: if \code{TRUE} (the default)
 the AIDs provided by the data module are used as row names of the
@@ -53,6 +56,8 @@ module to load.}
 modules are stored.}
 
 \item{object}{A \code{DataModule} object.}
+
+\item{x}{A \code{DataModule} object.}
 
 \item{base}{For \code{modulePath}: \code{logical(1)} whether the base folder or the
 actual data folder should be returned. The \emph{base} folder (returned with
