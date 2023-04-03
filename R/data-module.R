@@ -607,3 +607,36 @@ remove_participants <- function(x, aid, path = modulePath(x, base = TRUE)) {
             nv_path, "\nand update/fix documentation, NEWS and description.")
     nv_path
 }
+
+#' @title Data Module Validator
+#'
+#' @description
+#'
+#' The `valid_data_module` function takes a path to a TDFF data module as
+#' input parameter and checks its validity. In detail, the function checks
+#' the *data* folder of each of the data module versions in `path` for
+#' required data files and content.
+#'
+#' @param path `character(1)` with the (full) path of the data module. The
+#'     specified directory should contain sub-folders with different versions
+#'     of the data module.
+#'
+#' @return The function returns (invisibly) `TRUE` if the data module is valid,
+#'     or throws an error.
+#'
+#' @export
+#'
+#' @author Johannes Rainer
+valid_data_module <- function(path) {
+    if (!dir.exists(path))
+        stop("Directory \"", path, "\" does not exist.")
+    dirs <- list.dirs(path, full.names = TRUE, recursive = FALSE)
+    if (length(dirs)) {
+        for (dr in dirs) {
+            message("checking ", basename(dr), " ... ", appendLF = FALSE)
+            .valid_data_directory(file.path(dr, "data"), stop = TRUE)
+            message("OK")
+        }
+    } else stop("Directory \"", path, "\" does not contain any folders.")
+    invisible(TRUE)
+}

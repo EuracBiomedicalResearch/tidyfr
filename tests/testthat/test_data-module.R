@@ -317,3 +317,13 @@ test_that("remove_participants works", {
     ref <- data(tmp)
     expect_true(nrow(dta) < nrow(ref))
 })
+
+test_that("valid_data_module works", {
+    expect_error(valid_data_module("some_dir"), "does not exist")
+    expect_error(valid_data_module(ex2), "does not contain")
+    expect_error(valid_data_module(
+        system.file("txt", "db_example1", package = "tidyfr")),
+        "1.5.1/data is missing")
+    expect_true(valid_data_module(
+        system.file("txt", "db_example2", package = "tidyfr")))
+})
