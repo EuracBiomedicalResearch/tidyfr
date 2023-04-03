@@ -77,8 +77,10 @@ format it properly for R.</p>
 <span><span class="co"># S4 method for DataModule</span></span>
 <span><span class="fu"><a href="TDF.html">labels</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for DataModule</span></span>
-<span><span class="fu"><a href="TDF.html">groups</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
+<span><span class="fu">groups</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for DataModule</span></span>
+<span><span class="fu">groups</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">moduleName</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
 <span></span>
@@ -94,7 +96,7 @@ format it properly for R.</p>
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>...</dt>
-<dd><p>For <code>data</code>: additional arguments.</p></dd>
+<dd><p>Further arguments passed to downstream <code>groups</code> method</p></dd>
 
 
 <dt>aidAsRownames</dt>
@@ -119,6 +121,10 @@ modules are stored.</p></dd>
 
 
 <dt>object</dt>
+<dd><p>A <code>DataModule</code> object.</p></dd>
+
+
+<dt>x</dt>
 <dd><p>A <code>DataModule</code> object.</p></dd>
 
 
@@ -290,7 +296,7 @@ removing participant data for individuals with the specified aids.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> x0_examy                Year of examination</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Get information of variable grouping</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="TDF.html">groups</a></span><span class="op">(</span><span class="va">mdl</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">groups</span><span class="op">(</span><span class="va">mdl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            group         label</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         person        x0_sex</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2         person        x0_age</span>
@@ -342,7 +348,7 @@ removing participant data for individuals with the specified aids.</p></li>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Johannes Rainer.</p>
+  <p></p><p>Developed by Johannes Rainer, Michele Filosi.</p>
 </div>
 
 <div class="pkgdown">
