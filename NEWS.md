@@ -1,5 +1,9 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.16
+
+- Export validator function.
+
 ## Changes in 0.99.15
 
 - Change `groups` generic from S4 to S3.
