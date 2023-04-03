@@ -1,5 +1,9 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.15
+
+- Change `groups` generic from S4 to S3.
+
 ## Changes in 0.99.14
 
 - Add script to create the ScanningSWATH TDFF module.
