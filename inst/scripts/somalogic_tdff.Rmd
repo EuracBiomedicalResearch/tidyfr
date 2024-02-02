@@ -322,6 +322,10 @@ lbls <- cbind(lbls, anlts[lbls$description, ann_cn])
 lbls$long_description <- anlts[lbls$description, "TargetFullName"]
 lbls[is.na(lbls$long_description), "long_description"] <-
     lbls$description[is.na(lbls$long_description)]
+
+lbls$date_first_added <- "2023-01-31"
+lbls$date_last_changed <- format(Sys.time(), "%Y-%m-%d")
+
 ```
 
 Next we define *groups*, i.e. variables that can be grouped into the same

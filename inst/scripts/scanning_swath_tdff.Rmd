@@ -127,6 +127,10 @@ colnames(dummy) <- colnames(rd)
 rd <- rbind(rd, dummy)
 lbls <- cbind(lbls, rd)
 
+lbls$date_first_added <- "2023-03-06"
+lbls$date_last_changed <- format(Sys.time(), "%Y-%m-%d")
+
+
 library(CompMetaboTools)
 ## Add also CV.
 cvs <- lapply(dta_qc[, seq(2, length.out = nrow(prot))],
@@ -227,6 +231,9 @@ dummy <- data.frame(matrix(ncol = ncol(rd), nrow = length(cols)))
 colnames(dummy) <- colnames(rd)
 rd <- rbind(rd, dummy)
 lbls <- cbind(lbls, rd)
+
+lbls$date_first_added <- "2023-03-06"
+lbls$date_last_changed <- format(Sys.time(), "%Y-%m-%d")
 
 ## Add also CV.
 cvs <- lapply(dta_qc[, seq(2, length.out = nrow(pept))],
@@ -338,6 +345,9 @@ dummy <- data.frame(matrix(ncol = ncol(rd), nrow = length(cols)))
 colnames(dummy) <- colnames(rd)
 rd <- rbind(rd, dummy)
 lbls <- cbind(lbls, rd)
+
+lbls$date_first_added <- "2023-03-06"
+lbls$date_last_changed <- format(Sys.time(), "%Y-%m-%d")
 
 ```
 
