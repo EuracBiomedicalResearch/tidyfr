@@ -46,6 +46,8 @@ labels$long_description <- labels$biochemical_name
 labels$long_description[grep("flags$", labels$description)] <-
     paste0(labels$long_description[grep("flags$", labels$description)],
            " flags")
+labels$date_first_added <- "2022-07-01"
+labels$date_last_changed <- format(Sys.time(), "%Y-%m-%d")
 
 groups <- groups(
     biochristes7500, assayNames = c("concentrations", "flags"),

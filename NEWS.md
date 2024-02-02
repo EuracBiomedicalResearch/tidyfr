@@ -1,5 +1,10 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.17
+
+- Export also date_first_added and date_last_edited labels (columns need to be
+  manually added).
+
 ## Changes in 0.99.16
 
 - Export validator function.

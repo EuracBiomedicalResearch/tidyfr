@@ -127,6 +127,10 @@ colnames(dummy) <- colnames(rd)
 rd <- rbind(rd, dummy)
 lbls <- cbind(lbls, rd)
 
+lbls$date_first_added <- "2023-03-06"
+lbls$date_last_changed <- format(Sys.time(), "%Y-%m-%d")
+
+
 library(CompMetaboTools)
 ## Add also CV.
 cvs <- lapply(dta_qc[, seq(2, length.out = nrow(prot))],
@@ -228,6 +232,9 @@ colnames(dummy) <- colnames(rd)
 rd <- rbind(rd, dummy)
 lbls <- cbind(lbls, rd)
 
+lbls$date_first_added <- "2023-03-06"
+lbls$date_last_changed <- format(Sys.time(), "%Y-%m-%d")
+
 ## Add also CV.
 cvs <- lapply(dta_qc[, seq(2, length.out = nrow(pept))],
               function(z) {
@@ -279,6 +286,96 @@ valid_data_module("chris_scanningswath_peptides_full")
 
 ```
 
+
+## Exporting the raw peptide-level data
+
+In addition to the two data sets exported above (that are processed following
+the *method04* which includes knn-based imputation, normalization and batch
+correction) we are exporting next a data set with the *real* raw peptide
+concentrations. In the respective data set (processed using *method00*) only bad
+quality samples and peptides were removed.
+
+We next import the peptide-level data and export also that as a TDFF module.
+
+```{r}
+dr <- paste0("/home/jo/data/CHRIS/proteomics-ScanningSWATH/",
+             "40-0010_PeterPramstaller-EURAC-CHRIS/",
+             "r_i2PP00pep_40-0010_Analyt_PL3_2022-02-15_14h08m/")
+
+raw <- getSummarizedExperiment(
+    paste0(dr, "pepDataMat_WR_40-0010_2022-02-15_14h08m.txt"),
+    rd = 32, cd = 61, rd_names = "Precursor.Id")
+
+## Assign AIDs
+idx <- match(raw$barcode.aliquot, aid_mapping$aliquot_barcode)
+raw$AID <- aid_mapping$barcode_participant[idx]
+
+```
+
+```{r}
+dta <- data(raw, assayNames = 1, labelPrefix = "x0swr")
+dta$aid <- raw$AID
+
+cols <- c("File.Name", "Date", "Inst", "Inj", "Plate", "Sample.Name",
+          "container", "MS_Batch", "SP_Batch", "sample_id", "exclude")
+cd <- as.data.frame(colData(raw)[, cols])
+cd$Inst <- factor(cd$Inst)
+cd$Plate <- factor(cd$Plate)
+cd$container <- factor(cd$container)
+cd$MS_Batch <- factor(cd$MS_Batch)
+cd$SP_Batch <- factor(cd$SP_Batch)
+colnames(cd) <- paste0("x0swr", seq(ncol(dta), length.out = length(cols)))
+
+dta <- cbind(dta, cd)
+
+```
+
+Add and define the labels.
+
+```{r}
+lbls <- labels_from_data(dta)
+lbls$description <- c(rownames(rowData(raw)), cols)
+lbls$long_description <- c(rowData(raw)$First.Protein.Description, cols)
+
+## Add additional info.
+rcols <- c("Protein.Group", "Protein.Ids", "Protein.Names", "Genes",
+           "Modified.Sequence", "Stripped.Sequence", "Precursor.Id")
+rd <- as.data.frame(rowData(raw)[, rcols])
+dummy <- data.frame(matrix(ncol = ncol(rd), nrow = length(cols)))
+colnames(dummy) <- colnames(rd)
+rd <- rbind(rd, dummy)
+lbls <- cbind(lbls, rd)
+
+lbls$date_first_added <- "2023-03-06"
+lbls$date_last_changed <- format(Sys.time(), "%Y-%m-%d")
+
+```
+
+Define also label groups for protein abundances and general metadata.
+
+```{r}
+grps <- data.frame(group = "metadata", label = lbls$label)
+grps[seq_len(nrow(raw)), "group"] <- "peptide_abundance"
+grplbls <- data.frame(group = c("metadata", "peptide_abundance"),
+                      description = c("Sample and plate information",
+                                      "Peptide abundance (log2 scale)"))
+```
+
+Next we export the full data set.
+
+```{r}
+export_tdf(
+    name = "chris_scanningswath_peptides_raw",
+    description = paste0("CHRIS ScanningSWATH-based peptide-level plasma ",
+                         "proteomics data; full data set including all QCs ",
+                         "samples. Raw intensities (log2) with only minimal ",
+                         "data processing (method00, i.e. only problematic ",
+                         "samples and peptides removed)."),
+    version = "1.0.0.0", date = "2022-02-14",
+    data = dta, groups = grps, grp_labels = grplbls, labels = lbls)
+```
+
+
 ## Removing participants from the various data sets
 
 The version exported above contains the full data. We next exclude dropped-out
@@ -300,6 +397,10 @@ remove_participants(mdl, rem)
 
 mdl <- data_module("chris_scanningswath_peptides_full", "1.0.0.0", ".")
 remove_participants(mdl, rem)
+
+mdl <- data_module("chris_scanningswath_peptides_raw", "1.0.0.0", ".")
+remove_participants(mdl, rem)
+
 ```
 
 # Session information
