@@ -100,23 +100,23 @@ test_that(".export_groups works", {
     expect_equal(res$label, 1:4)
 })
 
-test_that(".empty_grp_labels works", {
-    res <- .empty_grp_labels()
+test_that(".empty_group_labels works", {
+    res <- .empty_group_labels()
     expect_true(is.data.frame(res))
     expect_equal(colnames(res), c("group", "description"))
 })
 
-test_that(".export_grp_labels works", {
+test_that(".export_group_labels works", {
     fl <- tempdir()
-    .export_grp_labels(fl)
-    res <- read.table(file.path(fl, "grp_labels.txt"),
+    .export_group_labels(fl)
+    res <- read.table(file.path(fl, "group_labels.txt"),
                       sep = "\t", header = TRUE)
     expect_equal(colnames(res), c("group", "description"))
     expect_true(nrow(res) == 0)
 
     df <- data.frame(group = "a", description = 1:10)
-    .export_grp_labels(fl, df)
-    res <- read.table(file.path(fl, "grp_labels.txt"),
+    .export_group_labels(fl, df)
+    res <- read.table(file.path(fl, "group_labels.txt"),
                       sep = "\t", header = TRUE)
     expect_equal(colnames(res), c("group", "description"))
     expect_true(all(res$group == "a"))
@@ -209,4 +209,15 @@ test_that("mapping_from_data works", {
     res <- mapping_from_data(data)
     expect_equal(colnames(res), c("label", "code", "value"))
     expect_true(nrow(res) == 0)
+})
+
+test_that(".export_labels_modules works", {
+    td <- tempdir()
+    l <- data.frame(label = 1:10, other = "a")
+    .export_labels_modules(l, module = "well", path = td)
+    res <- read.table(file.path(td, "labels_modules.txt"), sep = "\t",
+                      header = TRUE)
+    expect_equal(colnames(res), c("label", "module"))
+    expect_equal(res$label, 1:10)
+    expect_equal(res$module, rep("well", 10))
 })

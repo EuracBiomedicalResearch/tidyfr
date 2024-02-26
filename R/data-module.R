@@ -41,9 +41,9 @@
 #'   from the data module.
 #'
 #' - `groups`: returns a `data.frame` with the optional grouping of variables.
-#'   The group descriptions are provided byt the `grp_labels` function.
+#'   The group descriptions are provided byt the `group_labels` function.
 #'
-#' - `grp_labels`: returns a `data.frame` with a description for each defined
+#' - `group_labels`: returns a `data.frame` with a description for each defined
 #'   variable group.
 #'
 #' - `labels`: returns a `data.frame` with the description and annotation of the
@@ -134,7 +134,7 @@
 #' groups(mdl)
 #'
 #' ## Get the corresponding group description
-#' grp_labels(mdl)
+#' group_labels(mdl)
 NULL
 
 setClass("DataModule",
@@ -196,9 +196,9 @@ setMethod("show", "DataModule", function(object) {
 #' @rdname DataModule
 #'
 #' @export
-grp_labels <- function(object) {
+group_labels <- function(object) {
     validObject(object)
-    .grp_labels(modulePath(object))
+    .group_labels(modulePath(object))
 }
 
 #' @rdname DataModule
@@ -261,7 +261,7 @@ moduleDate <- function(object) object@date
 .valid_data_directory <- function(path, stop = FALSE, quick = FALSE) {
     fls <- dir(path)
     msgs <- character()
-    if (!all(c("data.txt", "groups.txt", "grp_labels.txt",
+    if (!all(c("data.txt", "groups.txt", "group_labels.txt",
                "info.txt", "labels.txt", "mapping.txt") %in% basename(fls))) {
         msgs <- c(msgs, paste0("Folder ", path, " is missing one or more",
                                " required data files."))
@@ -298,11 +298,11 @@ moduleDate <- function(object) object@date
         if (length(msgs <- .valid_groups(groups, stop = stop))) return(msgs)
         if (length(msgs <- .valid_data_groups(data, groups, stop = stop)))
             return(msgs)
-        grp_labels <- .grp_labels(path)
-        if (length(msgs <- .valid_grp_labels(grp_labels, stop = stop)))
+        group_labels <- .group_labels(path)
+        if (length(msgs <- .valid_group_labels(group_labels, stop = stop)))
             return(msgs)
-        if (length(msgs <- .valid_groups_grp_labels(
-                       groups, grp_labels, stop = stop))) return(msgs)
+        if (length(msgs <- .valid_groups_group_labels(
+                       groups, group_labels, stop = stop))) return(msgs)
     }
     TRUE
 }
@@ -323,8 +323,8 @@ moduleDate <- function(object) object@date
     .read_dataset_file(x, "groups")
 }
 
-.grp_labels <- function(x) {
-    gl <- .read_dataset_file(x, "grp_labels")
+.group_labels <- function(x) {
+    gl <- .read_dataset_file(x, "group_labels")
     rownames(gl) <- gl$group
     gl
 }
@@ -358,7 +358,7 @@ moduleDate <- function(object) object@date
 #'
 #' - `data` has column aid: `.valid_aid`
 #' - `groups` has columns group and label: `.valid_groups`
-#' - `grp_labels` has columns group and description: `.valid_grp_labels`
+#' - `group_labels` has columns group and description: `.valid_group_labels`
 #' - `info` is correct: .valid_info
 #' - `labels` has required columns: `.valid_labels`
 #' - `mapping` has required columns label code and value: `.valid_mapping`.
@@ -374,8 +374,8 @@ moduleDate <- function(object) object@date
 #'   `.valid_labels_mapping_categories`
 #' - `groups` and `data`: groups does not contain labels that are not in data:
 #'   `.valid_data_groups`.
-#' - `groups` and `grp_labels`: have a label for each group:
-#'   `.valid_groups_grp_labels`.
+#' - `groups` and `group_labels`: have a label for each group:
+#'   `.valid_groups_group_labels`.
 #'
 #' @noRd
 NULL
@@ -410,12 +410,12 @@ NULL
     msgs
 }
 
-.valid_grp_labels <- function(x, stop = TRUE) {
+.valid_group_labels <- function(x, stop = TRUE) {
     msgs <- character()
     if (ncol(x) != 2)
-        msgs <- c(msgs, "grp_labels is expected to have two columns.")
+        msgs <- c(msgs, "group_labels is expected to have two columns.")
     if (!length(msgs) && !all(colnames(x) == c("group", "description")))
-        msgs <- c(msgs, "grp_labels is required to have columns named ",
+        msgs <- c(msgs, "group_labels is required to have columns named ",
                   "\"group\" and \"description\".")
     if (stop && length(msgs))
         stop(msgs)
@@ -543,11 +543,12 @@ NULL
     msgs
 }
 
-.valid_groups_grp_labels <- function(groups, grp_labels, stop = TRUE) {
+.valid_groups_group_labels <- function(groups, group_labels, stop = TRUE) {
     msgs <- character()
-    if (length(miss <- groups$group[!groups$group %in% grp_labels$group]))
-        msgs <- c(msgs, paste0("missing group descriptions in grp_labels for: ",
-                               paste0("\"", miss, "\"", collapse = ", ")))
+    if (length(miss <- groups$group[!groups$group %in% group_labels$group]))
+        msgs <- c(
+            msgs, paste0("missing group descriptions in group_labels for: ",
+                         paste0("\"", miss, "\"", collapse = ", ")))
     if (stop && length(msgs))
         stop(msgs)
     msgs

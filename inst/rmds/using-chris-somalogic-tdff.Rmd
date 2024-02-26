@@ -1,0 +1,227 @@
+---
+title: "Using the CHRIS Somalogic TDFF(ormat) data in R"
+author: "Johannes Rainer"
+graphics: yes
+output:
+  BiocStyle::html_document:
+    toc_float: true
+bibliography: references.bib
+---
+
+```{r  biocstyle, echo = FALSE, results = "asis" }
+library(BiocStyle)
+set.seed(123)
+BiocStyle::markdown()
+```
+
+**Compiled**: `r date()`
+
+# Introduction
+
+This document describes how the Somalogic SomaScan-based plasma proteomics data
+from the CHRIS study can be loaded and analyzed in R. The data was reformatted,
+from its original Somalogic *adat* file format into the *Textual Data File
+Format* (TDFF) that is used as standard format for all CHRIS resources.
+
+The Somalogic SomaScan data provides relative abundance of over 7000 proteins,
+each analyte sometimes also referred to as a *SOMAmer*. The data was measured
+using a microarray-based approach and has been fully normalized by Somalogic. No
+apparent batch effect was observed (not for microarray slides, scanners used or
+plates) on the present data.
+
+The provided *values* for each SOMAmer (protein) is a *relative fluorescence
+unit* (RFU) in **natural scale**.
+
+The CHRIS somalogic data is available as two different modules:
+
+- **chris_somalogic**: contains protein abundances for about 4,000 CHRIS
+  participants. This data set does not contain any quality control or
+  calibration sample. Samples not passing the Somalogic quality assessments were
+  also removed. Also, all SOMAmer targeting non-human proteins have been
+  removed. This data module should be used for regular data analyses.
+- **chris_somalogic_full**: contains the *full* Somalogic data, i.e. also
+  measurements in blank samples, calibration samples and QC samples (from
+  Somalogic and pooled samples). No sample or SOMAmer was removed. This data
+  set should only be used for quality assessment of the Somalogic data set.
+
+
+# Usage
+
+Data in TDF format is best imported into R using the
+[tidyfr](https://github.com/EuracBiomedicalResearch/tidyfr) R package which can
+be installed using the code below.
+
+```{r, eval = FALSE}
+remotes::install_github("EuracBiomedicalResearch/tidyfr")
+```
+
+To load the CHRIS Somalogic proteomics data access to the folder with the data
+in TDF format is required. The name of the data folder (and hence the name of
+the *CHRIS module*) is *chris_somalogic*. Below we list all versions of the data
+set available for the this module. In this example we assume the
+*chris_somalogic* folder to be present in the current folder in which R is
+run. Parameter `path` allows to specify the folder in which CHRIS data modules
+are stored (we use `"."` to indicate the current working directory).
+
+```{r}
+library(tidyfr)
+
+list_data_modules(path = ".")
+```
+
+In the current folder thus one version for both Somalogic data modules are
+available. We can next load the *chris_somalogic* module with the `data_module`
+function specifying the name of the module, the version we want to load and also
+the path where the module can be found.
+
+```{r}
+chris_soma <- data_module("chris_somalogic", version = "1.0.3.1", path = ".")
+```
+
+Loading the module can take some time because the function checks the complete
+data set for its validity.  The `chris_soma` is now a reference to this module
+which provides some general information:
+
+```{r}
+chris_soma
+```
+
+Note that we could also use the functions `moduleName`, `moduleVersion`,
+`moduleDescription` and `moduleDate` to extract these metadata.
+
+The actual data can be loaded with the `data` function. This will read the full
+data which includes general information for each measurement along with the
+quantified protein levels. Also, the `data` function will ensure that the
+correct data types is assigned to the different variables. By default, the AIDs
+(identifiers for the individual samples) are used as the row names of the
+returned `data.frame`.
+
+```{r}
+soma_data <- data(chris_soma)
+dim(soma_data)
+```
+
+In this data columns are variables (such as protein abundances) and rows
+participants. Description and information on the individual columns can be
+loaded with the `labels` function:
+
+```{r}
+soma_ann <- labels(chris_soma)
+```
+
+This `data.frame` contains metadata and additional information on each variable
+in `data`:
+
+```{r}
+head(soma_ann)
+```
+
+As can be seen above, the first variables provide general information on the
+measurement, such as the ID of the plate on which a sample was processed
+(*PlateId*), the ID of the microarray scanner that was used to scan the slide
+(*ScannerID*), the ID of the actual microarray (*SlideId*). As mentioned above,
+no strong batch effects were seen on the data. Information on the actual
+SOMAmers (i.e. annotation of the analyte to proteins) are provided in columns
+*AptName* to *ColCheck*. Columns *cv_qc*, *cv_qc_chris*, *Dratio* and *eLOD*
+represent the coefficient of variation (CV) calculated on QC samples, the CV
+calculated on QC CHRIS Pool samples, the D-ratio calculated for each analyte and
+the estimated level of detection (calculated using the method proposed in
+[@candia_assessment_2022]. The Dratio represents the ratio between the
+biological and technical variance [@broadhurstGuidelinesConsiderationsUse2018].
+
+While these functions now loaded the data, it is suggested to further process
+and reformat the data to simplify its analysis. At first we replace the internal
+identifiers for CHRIS labels (i.e. starting with `x0so*`) with more meaningful
+column names.
+
+```{r}
+colnames(soma_data) <- soma_ann[colnames(soma_data), "description"]
+rownames(soma_ann) <- soma_ann$description
+```
+
+With that it is much easier to access individual values, such as the sample type
+for each measured sample.
+
+```{r}
+table(soma_data$SampleType)
+```
+
+It is also helpful to identify the columns in `soma_data` that contain the
+actual data on the SOMAmers (i.e. the relative protein abundances). Below we
+identify these columns (which have a non-empty value in the *AptName* column of
+the annotation `data.frame`).
+
+```{r}
+somamer <- soma_ann$AptName[soma_ann$AptName != ""]
+```
+
+Also, we will need at some point to *annotate* SOMAmers to the actual protein
+identifiers. For that we can use the `soma_ann` data frame that represents the
+annotation for the *labels* of the data module. Below we select 5 random
+SOMAmers and extract their annotation from this data frame.
+
+```{r}
+ids <- sample(somamer, 5)
+soma_ann[ids, ]
+```
+
+We thus get for these SOMAmers the protein they are designed to measure as well
+as quality control data (coefficients of variation).
+
+We could also simply calculate the mean abundance of these 5 SOMAmers across all
+available CHRIS participants using the code below:
+
+```{r}
+vapply(soma_data[, ids], mean, numeric(1))
+```
+
+As we can see from the values above they are in **natural scale** - so, for data
+analysis it might be better to transform them using `log2` or `log10` (which
+will also ensure the data to be more Gaussian distributed).
+
+At last we evaluate the signal distribution of the first selected SOMAmer both
+in natural and log2 scale. In addition we indicate the estimated LOD for this
+SOMAmer in the plot.
+
+```{r}
+id <- ids[1L]
+par(mfrow = c(1, 2))
+plot(density(soma_data[, id]), xlab = "abundance")
+grid()
+abline(v = soma_ann[id, "eLOD"])
+plot(density(log2(soma_data[, id])), xlab = expression(log[2]~abundance),
+     xlim = c(9, 16))
+grid()
+abline(v = log2(soma_ann[id, "eLOD"]))
+```
+
+For this SOMAmer all signals are thus above the estimated LOD.
+
+At last we calculate for each SOMAmer the number of values below eLOD.
+
+```{r}
+nas <- vapply(somamer, function(z) {
+    sum(soma_data[, z] < soma_ann[z, "eLOD"], na.rm = TRUE)
+}, integer(1))
+```
+
+For in total `r sum(nas > 0)` of the `r length(nas)` at least one reported value
+is below the eLOD of that SOMAmer. We can also calculate the percentage of
+values below eLOD for each SOMAmer.
+
+```{r}
+perc_abs <- nas / sum(soma_data$SampleType == "Sample") * 100
+```
+
+In total `r sum(perc_abs > 50)` SOMAmers have more than 50% of the reported
+values below their eLOD. Depending on the analysis performed, these might need
+to be removed from the data analysis.
+
+
+# Session information
+
+```{r}
+sessionInfo()
+```
+
+# References

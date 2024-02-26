@@ -1,5 +1,11 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.18
+
+- Rename "grp_labels.txt" to "group_labels.txt".
+- Export an additional file "labels_modules.txt" that links (all) labels to
+  the module.
+
 ## Changes in 0.99.17
 
 - Export also date_first_added and date_last_edited labels (columns need to be
