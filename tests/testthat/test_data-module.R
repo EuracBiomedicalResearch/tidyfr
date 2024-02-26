@@ -67,16 +67,16 @@ test_that(".groups, .valid_groups works", {
     expect_true(length(.valid_groups(groups, stop = FALSE)) > 0)
 })
 
-test_that(".grp_labels, .valid_grp_labels works", {
-    grpl <- .grp_labels(ex1)
-    expect_true(length(.valid_grp_labels(grpl)) == 0)
+test_that(".group_labels, .valid_group_labels works", {
+    grpl <- .group_labels(ex1)
+    expect_true(length(.valid_group_labels(grpl)) == 0)
     grpl$other <- "d"
-    expect_error(.valid_grp_labels(grpl), "two columns")
-    expect_true(length(.valid_grp_labels(grpl, stop = FALSE)) > 0)
+    expect_error(.valid_group_labels(grpl), "two columns")
+    expect_true(length(.valid_group_labels(grpl, stop = FALSE)) > 0)
     grpl$other <- NULL
     colnames(grpl) <- c("a", "b")
-    expect_error(.valid_grp_labels(grpl), "columns named")
-    expect_true(length(.valid_grp_labels(grpl, stop = FALSE)) > 0)
+    expect_error(.valid_group_labels(grpl), "columns named")
+    expect_true(length(.valid_group_labels(grpl, stop = FALSE)) > 0)
 })
 
 test_that(".info, .valid_info works", {
@@ -209,16 +209,16 @@ test_that(".valid_data_groups works", {
     expect_length(.valid_data_groups(data, groups[1:3, ]), 0)
 })
 
-test_that(".valid_groups_grp_labels works", {
+test_that(".valid_groups_group_labels works", {
     groups <- .empty_groups()
-    grp_labels <- .empty_grp_labels()
-    expect_length(.valid_groups_grp_labels(groups, grp_labels), 0)
+    group_labels <- .empty_group_labels()
+    expect_length(.valid_groups_group_labels(groups, group_labels), 0)
 
     groups <- data.frame(group = c("a", "a", "b", "d"), label = 1:4)
-    grp_labels <- data.frame(group = c("a", "b"), description = 1:2)
-    expect_error(.valid_groups_grp_labels(groups, grp_labels), "missing")
+    group_labels <- data.frame(group = c("a", "b"), description = 1:2)
+    expect_error(.valid_groups_group_labels(groups, group_labels), "missing")
 
-    expect_length(.valid_groups_grp_labels(groups[1:3, ], grp_labels), 0)
+    expect_length(.valid_groups_group_labels(groups[1:3, ], group_labels), 0)
 })
 
 test_that("data_module works", {
@@ -274,15 +274,15 @@ test_that("groups,DataModule works", {
     expect_equal(colnames(res), c("group", "label"))
 })
 
-test_that("grp_labels,DataModule works", {
+test_that("group_labels,DataModule works", {
     tmp <- new("DataModule")
     tmp@path <- "does not exist"
-    expect_error(grp_labels(tmp), "does not exist")
+    expect_error(group_labels(tmp), "does not exist")
 
     pth <- system.file("txt", package = "tidyfr")
     dm <- data_module(name = "db_example1", version = "1.0.0", path = pth)
 
-    res <- grp_labels(dm)
+    res <- group_labels(dm)
     expect_true(is.data.frame(res))
     expect_equal(colnames(res), c("group", "description"))
     expect_equal(res$group, c("person", "age"))

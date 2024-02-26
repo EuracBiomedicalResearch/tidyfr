@@ -103,11 +103,11 @@ labels(mdl)
 ```
 
 The `groups` function retrieves the optional grouping of variables and the
-`grp_labels` function the description/definition of these groups.
+`group_labels` function the description/definition of these groups.
 
 ```{r}
 groups(mdl)
-grp_labels(mdl)
+group_labels(mdl)
 ```
 
 

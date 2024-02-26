@@ -6,7 +6,7 @@
 \alias{DataModule-class}
 \alias{show,DataModule-method}
 \alias{data_module}
-\alias{grp_labels}
+\alias{group_labels}
 \alias{labels,DataModule-method}
 \alias{groups}
 \alias{groups.DataModule}
@@ -21,7 +21,7 @@ data(..., aidAsRownames = TRUE)
 
 data_module(name = character(), version = character(), path = data_path())
 
-grp_labels(object)
+group_labels(object)
 
 \S4method{labels}{DataModule}(object)
 
@@ -108,8 +108,8 @@ formats) according to the \emph{labels} information of the data module. Use
 the \code{labels} function to retrieve variable information (annotation)
 from the data module.
 \item \code{groups}: returns a \code{data.frame} with the optional grouping of variables.
-The group descriptions are provided byt the \code{grp_labels} function.
-\item \code{grp_labels}: returns a \code{data.frame} with a description for each defined
+The group descriptions are provided byt the \code{group_labels} function.
+\item \code{group_labels}: returns a \code{data.frame} with a description for each defined
 variable group.
 \item \code{labels}: returns a \code{data.frame} with the description and annotation of the
 individual variables (labels).
@@ -169,7 +169,7 @@ labels(mdl)
 groups(mdl)
 
 ## Get the corresponding group description
-grp_labels(mdl)
+group_labels(mdl)
 }
 \author{
 Johannes Rainer

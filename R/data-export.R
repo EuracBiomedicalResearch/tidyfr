@@ -71,7 +71,7 @@
 #'   columns are `"group"` (the name of the group) and `"label"` (the name of
 #'   the column in *data*).
 #'
-#' - **grp_labels**: contains descriptions for the *groups*. Expected columns
+#' - **group_labels**: contains descriptions for the *groups*. Expected columns
 #'   are `"group"` (the name of the group) and `"description"` (the
 #'   name/description of the group).
 #'
@@ -95,7 +95,7 @@
 #'     `data`. Expected columns are `"group"` and `"label"`. See the TDF
 #'     definition for details.
 #'
-#' @param grp_labels `data.frame` with the names (descriptions) of the groups
+#' @param group_labels `data.frame` with the names (descriptions) of the groups
 #'     defined in `groups`.
 #'
 #' @param labels `data.frame` with *annotations* to the variables (labels) in
@@ -160,11 +160,11 @@
 #' ## information
 #' export_tdf(name = "test_data", description = "Simple test data.",
 #'     version = "1.0.0", date = date(), path = path, data = d,
-#'     groups = g, grp_labels = gl, labels = l, mapping = m)
+#'     groups = g, group_labels = gl, labels = l, mapping = m)
 export_tdf <- function(name = character(), description = character(),
                        version = character(), date = character(),
                        path = ".", data = data.frame(), groups = data.frame(),
-                       grp_labels = data.frame(),
+                       group_labels = data.frame(),
                        labels = labels_from_data(data),
                        mapping = mapping_from_data(data), na = -89) {
     if (!length(name))
@@ -194,9 +194,9 @@ export_tdf <- function(name = character(), description = character(),
     if (nrow(groups))
         .valid_groups(groups, stop = TRUE)
     else groups <- .empty_groups()
-    if (nrow(grp_labels))
-        .valid_grp_labels(grp_labels, stop = TRUE)
-    else grp_labels <- .empty_grp_labels()
+    if (nrow(group_labels))
+        .valid_group_labels(group_labels, stop = TRUE)
+    else group_labels <- .empty_group_labels()
     dtypes <- vapply(data, function(z) class(z)[1L], character(1))
     if (nrow(labels)) {
         ## Check if columns min, max and missing are there...
@@ -223,14 +223,15 @@ export_tdf <- function(name = character(), description = character(),
     .valid_data_mapping_category_codes(data, mapping, stop = TRUE)
     .valid_labels_mapping_categories(labels, mapping, stop = TRUE)
     .valid_data_groups(data, groups, stop = TRUE)
-    .valid_groups_grp_labels(groups, grp_labels, stop = TRUE)
+    .valid_groups_group_labels(groups, group_labels, stop = TRUE)
     ## Actual exporting
     .info_skeleton(name = name, description = description,
                    version = version, date = date, path = module_path)
     .export_data(.format_data_export(data, na = na), path = module_path)
     .export_groups(groups, path = module_path)
-    .export_grp_labels(grp_labels, path = module_path)
+    .export_group_labels(group_labels, path = module_path)
     .export_labels(labels, path = module_path)
+    .export_labels_modules(labels, module = name, path = module_path)
     .export_mapping(mapping, path = module_path)
     ## Create a NEWS.md file.
     news_file <- file.path(path, name, "NEWS.md")
@@ -321,7 +322,7 @@ mapping_from_data <- function(data) {
     data.frame(group = character(), label = character())
 }
 
-.empty_grp_labels <- function() {
+.empty_group_labels <- function() {
     data.frame(group = character(), description = character())
 }
 
@@ -344,7 +345,7 @@ mapping_from_data <- function(data) {
                   "date\t", date, "\n",
                   "export_date\t", date(), "\n",
                   "export_info\texported with tidyfr version ",
-                  packageVersion("tidyfr"), "\n")
+                  packageVersion("tidyfr"))
     writeLines(out, con = file.path(path, "info.txt"))
 }
 
@@ -374,12 +375,22 @@ mapping_from_data <- function(data) {
                     file = file.path(path, "labels_additional_info.txt"))
 }
 
+.export_labels_modules <- function(path = ".", labels = data.frame(),
+                                   module = character()) {
+    labels <- .fill_labels(labels)
+    l <- data.frame(label = labels$label, module = rep(module, nrow(labels)))
+    write.table(l, sep = "\t", quote = FALSE, na = "", row.names = FALSE,
+                file = file.path(path, "labels_modules.txt"))
+}
+
+
 .export_groups <- function(path = ".", groups = .empty_groups()) {
     write.table(groups, sep = "\t", quote = FALSE, na = "",
                 row.names = FALSE, file = file.path(path, "groups.txt"))
 }
 
-.export_grp_labels <- function(path = ".", grp_labels = .empty_grp_labels()) {
-    write.table(grp_labels, sep = "\t", quote = FALSE, na = "",
-                row.names = FALSE, file = file.path(path, "grp_labels.txt"))
+.export_group_labels <- function(path = ".",
+                                 group_labels = .empty_group_labels()) {
+    write.table(group_labels, sep = "\t", quote = FALSE, na = "",
+                row.names = FALSE, file = file.path(path, "group_labels.txt"))
 }

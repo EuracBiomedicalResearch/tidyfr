@@ -14,7 +14,7 @@ export_tdf(
   path = ".",
   data = data.frame(),
   groups = data.frame(),
-  grp_labels = data.frame(),
+  group_labels = data.frame(),
   labels = labels_from_data(data),
   mapping = mapping_from_data(data),
   na = -89
@@ -45,7 +45,7 @@ variables.}
 \code{data}. Expected columns are \code{"group"} and \code{"label"}. See the TDF
 definition for details.}
 
-\item{grp_labels}{\code{data.frame} with the names (descriptions) of the groups
+\item{group_labels}{\code{data.frame} with the names (descriptions) of the groups
 defined in \code{groups}.}
 
 \item{labels}{\code{data.frame} with \emph{annotations} to the variables (labels) in
@@ -136,7 +136,7 @@ i.e. the \code{level} of the \code{factor}).
 \item \strong{groups}: allows to optionally group variables in \emph{data}. Expected
 columns are \code{"group"} (the name of the group) and \code{"label"} (the name of
 the column in \emph{data}).
-\item \strong{grp_labels}: contains descriptions for the \emph{groups}. Expected columns
+\item \strong{group_labels}: contains descriptions for the \emph{groups}. Expected columns
 are \code{"group"} (the name of the group) and \code{"description"} (the
 name/description of the group).
 }
@@ -180,7 +180,7 @@ path <- tempdir()
 ## information
 export_tdf(name = "test_data", description = "Simple test data.",
     version = "1.0.0", date = date(), path = path, data = d,
-    groups = g, grp_labels = gl, labels = l, mapping = m)
+    groups = g, group_labels = gl, labels = l, mapping = m)
 }
 \author{
 Johannes Rainer
