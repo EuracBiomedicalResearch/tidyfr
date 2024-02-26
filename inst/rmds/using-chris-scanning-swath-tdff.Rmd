@@ -1,0 +1,191 @@
+---
+title: "Using the CHRIS ScanningSWATH TDFF(ormat) proteomics data in R"
+author: "Johannes Rainer"
+graphics: yes
+output:
+  BiocStyle::html_document:
+    toc_float: true
+bibliography: references.bib
+---
+
+```{r  biocstyle, echo = FALSE, results = "asis" }
+library(BiocStyle)
+BiocStyle::markdown()
+```
+
+**Compiled**: `r date()`
+
+# Introduction
+
+This document describes how the ScanningSWATH (Mass Spectrometry)-based plasma
+proteomics data from the CHRIS study can be loaded and analyzed in R. The data
+was reformatted, from its original format provided by the proteomics facility of
+the Charite in Berlin into the *Textual Data File Format* (TDFF) that is used as
+standard format for all CHRIS resources.
+
+The ScanningSWATH proteomics data provides (relative) abundances of about 150
+plasma proteins quantified by a mass spectrometry (MS)-based approach. The data
+set is already normalized and no apparent batch effects were observed. The data
+is available at two different *levels*: the original abundances of the
+individual peptides and the protein level data which represents the summarized
+abundances of peptide intensities for each single protein.
+
+The provided abundance values for proteins (or peptides) are provided in **log2
+scale**.
+
+The complete CHRIS ScanningSWATH data is available as four different modules:
+
+- **chris_scanningswath_proteins**: contains protein abundances for about 4,000
+  CHRIS participants. This data set does not contain any quality control
+  samples. This data module should be used for regular data analyses.
+- **chris_scanningswath_peptides**: contains peptide abundances for about 4,000
+  CHRIS participants. This data set does not contain any quality control
+  samples.
+- **chris_scanningswath_proteins_full**: contains the *full* protein-level data,
+  i.e. also measurements in QC samples. This data set should only be used for
+  quality assessment purposes.
+- **chris_scanningswath_peptides_full**: contains the *full* peptide-level data,
+  i.e. also measurements in QC samples. This data set should only be used for
+  quality assessment purposes.
+
+
+
+# Usage
+
+Data in TDF format is best imported into R using the
+[tidyfr](https://github.com/EuracBiomedicalResearch/tidyfr) R package which can
+be installed using the code below.
+
+```{r, eval = FALSE}
+remotes::install_github("EuracBiomedicalResearch/tidyfr")
+```
+
+To load the CHRIS ScanningSWATH proteomics data, access to the folder with the
+data in TDF format is required. The name of the data folder (and hence the name
+of the *CHRIS module*) is *chris_scanningswath_proteins*. Below we list all
+versions of the data set available for the this module. In this example we
+assume the *chris_scanningswath_proteins* folder to be present in the current
+folder in which R is run. Parameter `path` allows to specify the folder in which
+CHRIS data modules are stored (we use `"."` to indicate the current working
+directory).
+
+```{r}
+library(tidyfr)
+
+list_data_modules(path = ".")
+```
+
+In the current folder we have thus one version for all 4 ScanningSWATH
+modules. We next load the *chris_scanningswath_proteins* module (which should be
+used for *standard* analyses) with the `data_module` function specifying the
+name of the module, the version we want to load and also the path where the
+module can be found.
+
+```{r}
+chris_prot <- data_module("chris_scanningswath_proteins",
+                          version = "1.0.0.1", path = ".")
+```
+
+The `chris_prot` is now a reference to this module which provides some general
+information:
+
+```{r}
+chris_prot
+```
+
+Note that we could also use the functions `moduleName`, `moduleVersion`,
+`moduleDescription` and `moduleDate` to extract these metadata.
+
+The actual data can be loaded with the `data` function. This will read the full
+data which includes general information for each measurement along with the
+quantified protein levels.
+
+```{r}
+prot_data <- data(chris_prot)
+dim(prot_data)
+```
+
+In this data columns are variables (such as protein abundances) and rows
+participants. Description and information on the individual columns can be
+loaded with the `labels` function:
+
+```{r}
+prot_ann <- labels(chris_prot)
+```
+
+This `data.frame` contains metadata and additional information on each variable
+(column) in `data`. Below we list the last 6 rows of that `data.frame`.
+
+```{r}
+tail(prot_ann)
+```
+
+Thus, in addition to quantified protein levels we have also general *metadata*
+variables providing information on the instrument on which the data was
+generated or the originating plate for the samples. Variables representing
+protein measurements will have non-empty information in column
+`"Protein.Ids"`. The last variable `"cv_qc_chris"` provides in addition the
+coefficient of variation for each protein calculated across (repeatedly
+measured) QC CHRIS Pool samples and hence provides information on the technical
+variance of measurements for each protein.
+
+While the `data` and `labels` functions allow to load the data, it is suggested
+to further process and reformat it to simplify its analysis. At first we replace
+the internal identifiers for CHRIS labels (i.e. starting with `x0sw*`) with more
+meaningful column names.
+
+```{r}
+rownames(prot_ann) <- prot_ann$description
+colnames(prot_data) <- prot_ann$description
+```
+
+With that it is much easier to access individual values.
+
+```{r}
+table(prot_data$MS_Batch)
+```
+
+It is also helpful to identify the columns in `prot_data` that contain the
+actual data on the proteins (i.e. the summarized protein abundances). Below we
+identify these columns (which have a non-empty value in the *Protein.Ids* column
+of the annotation `data.frame`).
+
+```{r}
+prot_cols <- rownames(prot_ann[prot_ann$Protein.Ids != "", ])
+```
+
+In the data set we have thus protein abundances for in total
+`r length(prot_cols)` proteins. The `prot_cols` variable can now also be helpful
+to extract the actual protein values. Below we for extract for example the CV
+for all proteins and plot their distribution.
+
+```{r}
+prot_cvs <- prot_ann[prot_cols, "cv_qc_chris"]
+plot(density(prot_cvs), xlab = "CV")
+grid()
+abline(v = 0.3)
+```
+
+Thus, most of the proteins have a CV lower than 0.3 (30% technical variance;
+vertical black line in the plot above).
+
+Below we calculate for each protein the mean value across all samples in the
+data set to show how the `prot_cols` information can be used to subset the
+`prot_data` `data.frame`.
+
+```{r}
+mean_conc <- vapply(prot_data[, prot_cols], mean, numeric(1))
+plot(sort(mean_conc), ylab = expression(log[2]~abundance))
+grid()
+```
+
+As we can see from the plot above the values are in **log2 scale**.
+
+
+# Session information
+
+```{r}
+sessionInfo()
+```
+
+# References
