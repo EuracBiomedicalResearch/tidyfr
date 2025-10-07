@@ -289,6 +289,12 @@ data$PlateId <- factor(data$PlateId)
 data$ScannerID <- factor(data$ScannerID)
 data$SlideId <- factor(data$SlideId)
 data$SampleType <- row_ann$SampleType
+## Convert others to character
+data$AliquotingNotes <- as.character(data$AliquotingNotes)
+data$TimePoint <- as.character(data$TimePoint)
+data$SampleGroup <- as.character(data$SampleGroup)
+data$SiteId <- as.character(data$SiteId)
+data$SubjectID <- as.character(data$SubjectID)
 data_cn <- colnames(data)
 sid <- data$SampleId
 

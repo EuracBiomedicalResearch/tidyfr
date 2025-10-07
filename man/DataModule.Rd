@@ -19,7 +19,7 @@
 \usage{
 data(..., aidAsRownames = TRUE)
 
-data_module(name = character(), version = character(), path = data_path())
+data_module(name = character(), version = "", path = data_path())
 
 group_labels(object)
 
@@ -50,7 +50,8 @@ returned \code{data.frame} (unless they are not unique).}
 module to load.}
 
 \item{version}{For \code{data_module}: \code{character(1)} defining the version of the
-module to load.}
+module to load. Can be empty (\code{version = ""}) if the data is the version
+subfolder is not used in the module data directory.}
 
 \item{path}{For \code{data_module}: \code{character(1)} defining the path where data
 modules are stored.}
@@ -85,11 +86,12 @@ format it properly for R.
 Available data modules in a certain path can be listed using the
 \code{\link[=list_data_modules]{list_data_modules()}} function.
 \itemize{
-\item \code{data_module}: load a specific data module. The name and version of the
+\item \code{data_module()}: load a specific data module. The name and version of the
 data module to load needs to be specified with parameters \code{name} and
-\code{version} respectively. Parameter \code{path} can be used to set the base path
-where the data module can be found. The function returns an instance of
-\code{DataModule}.
+\code{version} respectively. Parameter \code{version} can also be empty (
+\code{version = ""}) if the version of the module is not used or reported.
+Parameter \code{path} can be used to set the base path where the data module
+can be found. The function returns an instance of \code{DataModule}.
 }
 }
 

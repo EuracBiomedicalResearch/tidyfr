@@ -1,0 +1,159 @@
+---
+title: "Using the CHRIS MxP500 targeted metabolomics TDFF(ormat) data in R"
+author: "Marilyn De Graeve, Johannes Rainer"
+graphics: yes
+output:
+  BiocStyle::html_document:
+    toc_float: true
+bibliography: references.bib
+---
+
+```{r  biocstyle, echo = FALSE, results = "asis" }
+library(BiocStyle)
+BiocStyle::markdown()
+```
+
+**Compiled**: `r date()`
+
+# Introduction
+
+This document describes how the Biocrates MxP500-based targeted metabolomics
+data from the CHRIS study [@pattaro_cooperative_2015] can be loaded and analyzed
+in R. This data set provides metabolite and lipid abundances from a subset of
+CHRIS participants.
+
+The provided *values* for each metabolite are absolute concentrations in
+**natural scale**.
+
+
+# Usage
+
+Data in TDF format is best imported into R using the
+[tidyfr](https://github.com/EuracBiomedicalResearch/tidyfr) R package which can
+be installed using the code below.
+
+```{r, eval = FALSE}
+remotes::install_github("EuracBiomedicalResearch/tidyfr")
+```
+
+To load the CHRIS MxP500 metabolomics data, access to the folder with the data
+in TDF format is required. The name of the data folder (and hence the name of
+the *CHRIS module*) is *metabolomics_MxP500*. Below we list all versions of the
+data set available for the this module. In this example we assume the
+*metabolomics_MxP500* folder to be present in the current folder in which R is
+run. Parameter `path` allows to specify the folder in which CHRIS data modules
+are stored (we use `"."` to indicate the current working directory).
+
+```{r}
+library(tidyfr)
+
+list_data_modules(path = ".")
+```
+
+In this particular case, 2 versions of the module are available. We can next
+load the module with the `data_module` function specifying the name of the
+module, the version we want to load and also the path where the module can be
+found.
+
+```{r}
+metabo <- data_module("metabolomics_MxP500", version = "1.0.0.2", path = ".")
+```
+
+The `metabo` variable is now a reference to this module which provides some
+general information:
+
+```{r}
+metabo
+```
+
+Note that we could also use the functions `moduleName`, `moduleVersion`,
+`moduleDescription` and `moduleDate` to extract these metadata.
+
+The actual data can be loaded with the `data` function. This will read the full
+data matrix of analyte (metabolite or lipid) concentrations.
+
+```{r}
+metabo_data <- data(metabo)
+dim(metabo_data)
+```
+
+In this `data.frame`, columns are variables (metabolites/lipids) and rows
+samples (i.e. measurements of analytes in CHRIS study samples, or QC
+samples). This data set provides the **full** data from the measurements,
+i.e. no measurement or value was removed. It is therefore highly advisable to
+consider also the coefficient of variation (CV) of each analyte calculated
+across the repeatedly measured QC CHRIS POOL sample, as this provides
+information on the technical variability of the specific analyte in the present
+data set. It is at the researchers discretion to exclude analytes from
+downstream analyses based on these QC measurements.
+
+Samples can be identified through the row names of this `data.frame`, which is
+either the AID (for CHRIS participants) or an arbitrary name for QC samples
+(starting with `"QC"`). Description and information on the individual
+**columns** can be loaded with the `labels` function:
+
+```{r}
+metabo_ann <- labels(metabo)
+```
+
+This `data.frame` contains metadata and additional information on each variable
+in `data`:
+
+```{r}
+head(metabo_ann)
+```
+
+Each row provides annotations for each column in the `metabo_data` `data.frame`
+(rows and columns are in the same order). Annotations include the *class* of
+metabolite/lipid, its Human Metabolome Database (HMDB) identifier(s) and
+identifiers from other databases as well chemical identifiers (inchi, inchikey,
+smiles). In cases when metabolites/lipids are annotated to more than one
+identifier, these identifiers are concatenated using a `"|"`.
+
+```{r}
+stopifnot(all(rownames(metabo_ann) == colnames(metabo_data)))
+```
+
+The column *cv_qc_chris* represent the coefficient of variation (CV) calculated
+on QC samples, the QC CHRIS Pool samples. As described above, this values thus
+represents the technical variability for each metabolite in the present dataset.
+
+While these functions now loaded the data, it is suggested to further process
+and reformat the data to simplify its analysis. At first we replace the internal
+identifiers for CHRIS labels (i.e. starting with `x0ptx*`) with more meaningful
+column names.
+
+```{r}
+colnames(metabo_data) <- metabo_ann$description
+rownames(metabo_ann) <- metabo_ann$description
+```
+
+With that it is much easier to access individual values, e.g. for the analyte
+with the id *Gly* (which is the metabolite glycine).
+
+```{r}
+quantile(metabo_data$Gly, na.rm = TRUE)
+```
+
+As we can see from the values above they are in **natural scale** - so, for data
+analysis it might be better to transform them using `log2` or `log10` (which
+will also ensure the data to be more Gaussian distributed).
+
+At last we also evaluate the distribution of the coefficients of variation for
+all analytes in the data set.
+
+```{r, fig.cap = "Distribution of the CV per analyte."}
+plot(density(metabo_ann$cv_qc_chris, na.rm = TRUE))
+```
+
+Most of the analytes have thus a CV < 0.3, which in analytical chemistry is
+considered *acceptable*.
+
+
+# Session information
+
+```{r}
+sessionInfo()
+```
+
+# References
