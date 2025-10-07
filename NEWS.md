@@ -1,5 +1,9 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.19
+
+- Use `-1` as encoding for missing values for `logical` (boolean).
+
 ## Changes in 0.99.18
 
 - Rename "grp_labels.txt" to "group_labels.txt".

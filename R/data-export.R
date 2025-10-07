@@ -205,7 +205,8 @@ export_tdf <- function(name = character(), description = character(),
         if (!any(colnames(labels) == "missing")) {
             labels$missing <- NA
             labels$missing[dtypes %in% c("numeric", "integer",
-                                         "factor", "logical")] <- na
+                                         "factor")] <- na
+            labels$missing[dtypes == "logical"] <- -1L
         }
         if (!any(colnames(labels) == "min"))
             labels$min <- minmax$min
@@ -259,8 +260,8 @@ labels_from_data <- function(data, na = -89) {
     labels <- data.frame(label = names(dtypes),
                          type = .LABEL_DATA_TYPES[dtypes],
                          missing = NA)
-    labels$missing[dtypes %in% c("numeric", "integer",
-                                 "factor", "logical")] <- na
+    labels$missing[dtypes %in% c("numeric", "integer", "factor")] <- na
+    labels$missing[dtypes == "logical"] <- -1
     mm <- .data_min_max(data)
     .fill_labels(cbind(labels, mm))[names(dtypes) != "aid", ]
 }
@@ -283,7 +284,8 @@ mapping_from_data <- function(data) {
 }
 
 #' Format the data for export. This means replacing missing values with with
-#' the value specified with parameter `na`.
+#' the value specified with parameter `na`. Note that by definition, -1 is
+#' used as missing value for logical.
 #'
 #' @param data `data.frame
 #'
@@ -292,7 +294,9 @@ mapping_from_data <- function(data) {
 #' @noRd
 .replace_na_data <- function(data, na = -89) {
     as.data.frame(lapply(data, function(z) {
-        z[is.na(z)] <- na
+        if (is.logical(z))
+            z[is.na(z)] <- -1
+        else z[is.na(z)] <- na
         z
     }))
 }
