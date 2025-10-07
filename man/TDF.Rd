@@ -43,7 +43,7 @@ variables of a module.
 }
 
 Which data is retrieved depends on the parameter \code{object}.
-See \link{chris-SummarizedExperiment} if \code{object} is a \code{\link[=SummarizedExperiment]{SummarizedExperiment()}}.
+See \link{chris-SummarizedExperiment} if \code{object} is a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}}.
 }
 
 \author{

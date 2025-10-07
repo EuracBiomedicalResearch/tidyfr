@@ -28,7 +28,7 @@
 a \code{data.frame} with the data.
 }
 \description{
-The \code{\link[=SummarizedExperiment]{SummarizedExperiment()}} class is a container for data from large scale
+The \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::SummarizedExperiment()}} class is a container for data from large scale
 assays for biological experiments. In contrast to TDF data, samples are
 organized in columns of a \code{SummarizedExperiment} and measurements in rows.
 The \code{data}, \code{labels} and \code{groups} methods allow to extract information from
@@ -62,7 +62,7 @@ variables returned by \code{data} from a \code{SummarizedExperiment}. Columns
 \item \code{labels}: extracts label annotations for the data extracted with
 \code{data} from a \code{SummarizedExperiment}. The returned \code{data.frame} is in the
 \emph{labels} format of the TDF but contains additional columns with the
-available annotations from the \code{SummarizedExperiment}'s \code{\link[=rowData]{rowData()}}. The
+available annotations from the \code{SummarizedExperiment}'s \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment::rowData()}}. The
 \code{rownames} of the \code{SummarizedExperiment} are returned in columns
 \code{"description"}.
 }

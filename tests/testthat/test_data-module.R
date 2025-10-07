@@ -222,7 +222,6 @@ test_that(".valid_groups_group_labels works", {
 })
 
 test_that("data_module works", {
-    expect_error(data_module("other"), "'version'")
     expect_error(data_module(), "'name'")
     expect_error(data_module("other", "1.0.0"), "exists")
 

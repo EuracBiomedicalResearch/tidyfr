@@ -20,11 +20,12 @@
 #' Available data modules in a certain path can be listed using the
 #' [list_data_modules()] function.
 #'
-#' - `data_module`: load a specific data module. The name and version of the
+#' - `data_module()`: load a specific data module. The name and version of the
 #'   data module to load needs to be specified with parameters `name` and
-#'   `version` respectively. Parameter `path` can be used to set the base path
-#'   where the data module can be found. The function returns an instance of
-#'   `DataModule`.
+#'   `version` respectively. Parameter `version` can also be empty (
+#'   `version = ""`) if the version of the module is not used or reported.
+#'   Parameter `path` can be used to set the base path where the data module
+#'   can be found. The function returns an instance of `DataModule`.
 #'
 #' @section Accessing properties and data from a module:
 #'
@@ -88,7 +89,8 @@
 #'     modules are stored.
 #'
 #' @param version For `data_module`: `character(1)` defining the version of the
-#'     module to load.
+#'     module to load. Can be empty (`version = ""`) if the data is the version
+#'     subfolder is not used in the module data directory.
 #'
 #' @param ... For `data`: additional arguments.
 #'
@@ -138,7 +140,7 @@
 NULL
 
 setClass("DataModule",
-         slots = c(name = "character",
+         slots = c(name ="character",
                    path = "character",
                    version = "character",
                    description = "character",
@@ -163,12 +165,10 @@ setValidity("DataModule", function(object) {
 #'@importFrom methods new
 #'
 #' @export
-data_module <- function(name = character(), version = character(),
+data_module <- function(name = character(), version = "",
                         path = data_path()) {
     if (!length(name))
         stop("'name' needs to be specified")
-    if (!length(version))
-        stop("'version' needs to be specified")
     module_path <- file.path(path, name, version, "data")
     if (!dir.exists(module_path))
         stop("No data module with that name and version exists in '", path, "'")

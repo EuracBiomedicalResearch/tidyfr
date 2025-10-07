@@ -1,5 +1,9 @@
 # `tidyfr` 0.99
 
+## Changes in 0.99.20
+
+- Support an empty `version` in the `data_module()` function.
+
 ## Changes in 0.99.19
 
 - Use `-1` as encoding for missing values for `logical` (boolean).
